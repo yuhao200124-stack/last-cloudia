@@ -1,12 +1,12 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
-import { K } from './engine/battle.mjs?v=20260930-1538';
-import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1538';
-import { characterGear } from './character-gear.mjs?v=20260930-1538';
-import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1538';
-import { effectSentence, equipMove, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1538';
-import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1538';
+import { K } from './engine/battle.mjs?v=20260930-1541';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1541';
+import { characterGear } from './character-gear.mjs?v=20260930-1541';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1541';
+import { effectSentence, equipMove, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1541';
+import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1541';
 // data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
 const V = new URL(import.meta.url).search;
 
@@ -109,9 +109,19 @@ function sendState() {
 window.addEventListener('message', e => {
   if (!buildEmbed || e.origin !== location.origin || e.source !== window.parent) return;
   if (e.data?.type === 'lc-build-toggle') toggleSkill(Number(e.data.id));
-  else if (e.data?.type === 'lc-build-view') setBuildView(e.data.view);
+  else if (e.data?.type === 'lc-build-view') { setBuildView(e.data.view); placeResultCard(!!e.data.cardOutside); }
   else if (e.data?.type === 'lc-build-hello') sendState();
 });
+// 战斗设置 on a desktop window (user 2026-09-30: “在战斗设置只需要计算器和那些触发效果加护什么的需要移动”): the result
+// card (计算结果, 加护, 配装报告, 用游戏脚本结算, 触发效果) goes above the 配装 panel in the page's right-hand column; the
+// settings 01–05 stay where they are. Otherwise (技能表, phone) the card stays at the top of this frame.
+let resultCardOutside = false;
+function placeResultCard(outside) {
+  resultCardOutside = outside;
+  const card = $('enginePanel'), panel = $('engineBuild'); if (!card || !panel || !panelRoot) return;
+  if (outside && card.parentNode !== panelRoot) panelRoot.insertBefore(card, panel);
+  else if (!outside && card.parentNode === panelRoot) $('calculator')?.prepend(card);
+}
 function toggleSkill(id) {
   if (!Number.isFinite(id) || buildAuto.includes(id)) return;
   if (build.selected.includes(id)) { build.selected = build.selected.filter(x => x !== id); if (lastAdded === id) lastAdded = null; }
@@ -244,7 +254,7 @@ async function ensureSwitches() { if (!switches) switches = await fetch(new URL(
 
 const PANEL_CSS_V = '20260929-3col';
 // the page's shadow root has none of this document's base styles
-const HOST_STYLE = `:host{display:block;font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;color:#172d49;font-synthesis:none}*{box-sizing:border-box}#engineBuild{margin:0}.engine-build-on{display:none!important}`;
+const HOST_STYLE = `:host{display:block;font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;color:#172d49;font-synthesis:none}*{box-sizing:border-box}#engineBuild{margin:0}.engine-build-on{display:none!important}#enginePanel{margin:0 0 12px}`;
 const STYLE = `.engine-build-table td{vertical-align:middle}.engine-build-table{min-width:0!important}.engine-build-table td,.engine-build-table th{padding:7px 8px}.engine-build-table small{min-width:0!important}#engineBuild{margin-top:18px;padding-top:4px}#engineBuild .section-heading{margin-bottom:6px}#engineBuild .section-heading h3{margin:0;font-size:1rem}.engine-build-on{flex-direction:row!important;align-items:center;gap:6px;font-weight:500!important}#engineBuildWrap{margin-top:14px}#engineBuildStatus{margin:6px 2px 0}.engine-build-sc{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:14px;padding:10px 12px;border:1px solid #cfdfef;border-radius:6px;background:#edf4fb}.engine-build-sc span{font-size:.85rem;color:#445c79;font-weight:600}.engine-build-sc strong{font-size:1.45rem;margin-left:8px;font-variant-numeric:tabular-nums;color:#172d49}.engine-build-breaks{display:inline-flex;gap:6px}.engine-build-breaks button{min-height:32px;padding:4px 10px}.engine-build-breaks button[aria-pressed=true]{background:#285b95;color:#fff;border-color:#285b95}.engine-build-changes{font-size:.8rem;color:#445c79;margin-top:3px;line-height:1.55}.engine-build-sccell{text-align:center!important}.engine-build-sccell b{display:block}.engine-build-sccell small{font-size:.75rem}.engine-build-auto td{background:#f7f9fc}.engine-build-divider td{padding:0!important;background:#e8eff8}.engine-build-divider button{display:flex;width:100%;justify-content:space-between;align-items:center;gap:8px;min-height:34px;padding:6px 10px;border:0;border-radius:0;background:transparent;color:#27496f;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;text-align:left}.engine-build-divider button:hover{background:#dde8f5}.engine-build-fold{font-weight:500;color:#445c79;white-space:nowrap}.engine-build-auto td:last-child{white-space:nowrap;text-align:center}.engine-build-tag{display:inline!important;font-size:.72rem!important;background:#e3ebf5;border-radius:3px;padding:1px 5px;color:#35577d}.engine-build-table td button{min-height:28px;padding:2px 10px}.engine-build-picked{table-layout:fixed}.engine-build-picked td{overflow-wrap:anywhere}#engineBuild{position:relative}.engine-plan-bar{display:flex;align-items:center;gap:8px;margin-top:6px}#engineRecommend{margin-top:10px}.engine-plan-pick{flex:1;display:flex!important;flex-direction:row!important;align-items:center;gap:8px;margin:0!important;font-weight:600;color:#445c79;font-size:.85rem}.engine-plan-pick select{flex:1;min-width:0;min-height:36px}.engine-plan-bar button{min-height:36px}.engine-plan-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.engine-plan-actions button{min-height:36px}#enginePlanStatus{margin:8px 2px 0;min-height:1em}.engine-pop{position:absolute;z-index:30;width:250px;max-width:calc(100% - 4px);padding:12px;border:1px solid #c9d6e6;border-radius:10px;background:#fff;box-shadow:0 10px 28px rgba(23,45,73,.18),0 2px 6px rgba(23,45,73,.08)}.engine-pop::before{content:'';position:absolute;top:-7px;left:var(--arrow,20px);width:12px;height:12px;background:#fff;border-left:1px solid #c9d6e6;border-top:1px solid #c9d6e6;transform:rotate(45deg)}.engine-pop[hidden]{display:none}.engine-pop-title{margin:0 0 8px;font-size:.88rem;font-weight:600;color:#172d49}.engine-pop input{width:100%;box-sizing:border-box;min-height:36px;padding:6px 10px;border:1px solid #b9c9dc;border-radius:6px;font-size:.95rem}.engine-pop input:focus{outline:2px solid #9cc0ea;outline-offset:0;border-color:#285b95}.engine-pop-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.engine-pop-actions button{min-height:32px;padding:4px 14px}.engine-pop-actions .danger{background:#b3372f;border-color:#b3372f;color:#fff}#reviewBody table{margin-top:6px}#reviewBody h3{margin:18px 0 6px}#enginePrimary .ep-hits{display:flex;gap:8px;align-items:center;justify-content:flex-end}#enginePrimary .ep-hits input{width:5.5em;min-height:32px;padding:4px 6px;font-size:.9rem}#enginePrimary .ep-hits small{color:#a5c0dc}#resultState{display:none}#ep-state{font-size:.8125rem;color:#b3d6f4;background:#234566;padding:5px 8px;border-radius:4px}#legacyResults{border-top:1px solid #3a526f;margin-top:14px;padding-top:10px}#legacyResults summary{color:#b3d6f4;font-size:.85rem}#legacyResults p{color:#c0d3e8}.engine-panel .engine-fields{margin:.5rem 0}.engine-panel .engine-hits td,.engine-panel .engine-hits th{white-space:nowrap}.engine-panel .engine-edits{margin:.5rem 0 0;padding-left:1.2rem}.engine-panel .engine-edits li{display:flex;justify-content:space-between;gap:1rem}.engine-panel .engine-conditional{display:block;margin:.25rem 0}.engine-panel .engine-conditional small{color:var(--muted,#6b7280)}.engine-panel details{margin-top:.5rem}.engine-panel ul{margin:.25rem 0 0;padding-left:1.2rem}`;
 // ---- the main result card ----
 // 命中段数 is only the user's own count (default 10), kept per move by the page (damage-calculator.mjs); the card
@@ -469,7 +479,7 @@ function renderPrimary(out, ctx) {
   const first = live[0]; const st = out.stats; const rateOf = h => Math.min(100, Math.max(0, h?.crt ?? st.crt.real ?? 0)) / 100; const critRate = rateOf(first);
   const { hits } = currentHits();
   if (dualLocked && $('dualWield')) { $('dualWield').checked = true; $('dualWield').disabled = true; }
-  if (document.activeElement !== $('engineHits')) $('engineHits').value = siteHits() || '';
+  if (document.activeElement !== $('engineHits') && panelRoot?.activeElement !== $('engineHits')) $('engineHits').value = siteHits() || '';
   if (!first) { for (const id of ['ep-normal', 'ep-critical', 'ep-total', 'ep-normalTotal', 'ep-killer', 'ep-weak', 'ep-normalGauge', 'ep-normalCap', 'ep-critGauge', 'ep-critCap']) $(id).textContent = '—'; $('ep-note').textContent = out.errors.length ? `脚本错误：${out.errors[0].name}` : '这个招式没有伤害段。'; return; }
   const range = (a, b) => `${fmt(a)} – ${fmt(b)}`;
   const expect = h => h.normal.mean * (1 - rateOf(h)) + (h.critical ? h.critical.mean : h.normal.mean) * rateOf(h);
@@ -544,6 +554,7 @@ function mount() {
     } else aside.insertBefore(buildPanel, aside.firstChild);
     $('calculator').prepend(card);
     for (const type of ['change', 'input']) card.addEventListener(type, e => e.stopPropagation());
+    placeResultCard(resultCardOutside);
   }
   // 目标：从游戏怪物表选择 lives with the rest of the Boss/target fields (Boss 与战斗条件 section) instead of in
   // this card; fall back to appending here if that section's slot isn't on the page.
@@ -769,7 +780,7 @@ async function gameCharacter(unitDressId) {
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1538'), import('./engine/engine-data.mjs?v=20260930-1538'), import('./engine/scenario.mjs?v=20260930-1538'), import('./engine/report-adapter.mjs?v=20260930-1538'), import('./engine/loadout-adapter.mjs?v=20260930-1538')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1541'), import('./engine/engine-data.mjs?v=20260930-1541'), import('./engine/scenario.mjs?v=20260930-1541'), import('./engine/report-adapter.mjs?v=20260930-1541'), import('./engine/loadout-adapter.mjs?v=20260930-1541')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
   if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');
@@ -807,7 +818,7 @@ document.addEventListener('lc:calculator-reset', () => {
   assumed.clear(); probAssumed.clear();
   supportChecked = new Set(); supportActive = [];
   try { if (supportDress) localStorage.setItem(`lc-support-magic:${supportDress}`, '[]'); } catch {}
-  for (const i of document.querySelectorAll('[data-support-magic], #engineResult input[type=checkbox]')) i.checked = false;
+  for (const root of [document, panelRoot].filter(Boolean)) for (const i of root.querySelectorAll('[data-support-magic], #engineResult input[type=checkbox]')) i.checked = false;
 });
 async function ensureMonsters() {
   if (!monsterBundle) { monsterBundle = await fetch(new URL('./game-data/engine/monsters.json' + V, import.meta.url)).then(r => r.json()); if (battle) battle.master.merge(monsterBundle);

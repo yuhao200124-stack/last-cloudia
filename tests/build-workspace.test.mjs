@@ -48,6 +48,10 @@ test('配装 happens on the home page: the table with “+” on the left, the c
   for (const s of ['id="buildToolbar" aria-label="配装" hidden', 'id="buildLayout"', 'id="buildFrame"', 'id="buildExit"', 'data-build-view="settings"'])
     assert(home.includes(s), s);
   assert(!home.includes('lc-in-calculator'), 'the old in-calculator table is gone');
+  // 2026-09-30 (user: “在战斗设置只需要计算器和那些触发效果加护什么的需要移动…下面那些不需要变”): on a desktop window the
+  // 战斗设置 view puts the result card above the 配装 panel; the settings 01–05 stay in the frame
+  assert(table.includes("cardOutside: !phone() && leftView === 'settings'"));
+  assert.match(panel, /function placeResultCard\(outside\)[\s\S]*panelRoot\.insertBefore\(card, panel\)/);
   const saved = read('dist/character-saved-builds.mjs');
   assert.match(saved, /scTotal\(/, 'the character page counts SC the same way');
   assert(saved.includes('./index.html?character=${encodeURIComponent(characterId)}&plan='), '打开配装 goes to the home page');
