@@ -1,10 +1,10 @@
 // Calculator-facing entry point of the battle-script sandbox: builds the attacker and target from the
 // calculator's inputs, replays the game's setup triggers, casts one skill and reports every hit with
 // normal/critical ranges, the damage cap, the attack stat layers and which passives fired.
-import { Battle, K, parseInts } from './battle.mjs?v=20260930-1158';
-import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20260930-1158';
-import { zhName, zhCondition } from './gloss.mjs?v=20260930-1158';
-export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20260930-1158';
+import { Battle, K, parseInts } from './battle.mjs?v=20260930-1214';
+import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20260930-1214';
+import { zhName, zhCondition } from './gloss.mjs?v=20260930-1214';
+export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20260930-1214';
 
 export const TRIGGER_LABELS = { 1: '状态计算', 10: 'Wave开始', 11: 'Wave结束', 12: 'Wave中每帧', 16: '咏唱前', 17: '技能结束时', 18: '技能发动前', 19: '弹道生成前', 20: '弹道处理', 21: '命中时', 22: '被命中时', 23: '伤害计算时', 24: '被伤害计算时', 25: '命中后', 26: '被命中后', 27: '伤害计算后', 28: '被伤害计算后', 29: '命中后（前）', 30: '被命中后（前）', 35: '分割HP归零', 36: '造成致死伤害', 37: '受到致死伤害', 40: 'HP变化', 41: 'SCT变化', 42: 'MP变化', 43: 'STR变化', 44: 'DEF变化', 45: 'INT变化', 46: 'MND变化', 50: '状态异常变化', 51: '角色类型变化', 52: '气绝/Break变化', 53: '咏唱等级变化', 54: 'Buff变化', 55: '必杀量表变化', 59: '单位状态变化', 60: 'Buff持续中', 61: '施加Buff前', 62: '被施加Buff前', 65: '生存人数变化', 66: '地形效果变化', 68: 'Boss Break变化', 69: '生存人数变化2', 70: '按间隔', 71: '按间隔（条件）', 72: '发动方抽选时', 73: '发动方效果前', 74: '发动方效果后', 75: '目标抽选时', 76: '目标效果前', 77: '目标效果后', 78: '施加异常前', 79: '被施加异常前', 80: '获得Zel', 81: '获得宝箱', 92: '流程内触发', 93: '流程内触发（参数）', 94: '背景变化', 95: '时间轴条件', 96: '复活时', 97: '复活对象时', 98: '领域进出' };
 // Triggers the sandbox fires on its own during setup and the cast; everything else is an event the

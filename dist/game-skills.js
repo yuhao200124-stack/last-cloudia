@@ -148,8 +148,8 @@
       if (i?.site && !i.site[buildChar]) {
         knownChar = false;
         $('buildStatus').textContent = `没有这个角色（编号 ${buildChar}）`; $('buildPanelHost').textContent = '没有这个角色。'; $('buildExit').textContent = '回到首页';
-      } else frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-1158`;
-    }).catch(() => { frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-1158`; });
+      } else frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-1214`;
+    }).catch(() => { frame.src = `./damage-calculator.html?character=${encodeURIComponent(buildChar)}&embedded=build${params.get('plan') ? `&plan=${encodeURIComponent(params.get('plan'))}` : ''}&v=20260930-1214`; });
     document.querySelector('.build-views').addEventListener('click', e => {
       const b = e.target.closest('[data-build-view]'); if (!b) return;
       if (b.dataset.buildView === 'results') phoneView = 'results'; else { leftView = b.dataset.buildView; phoneView = 'left'; }

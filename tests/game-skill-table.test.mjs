@@ -128,6 +128,15 @@ test('实际数值: the numbers of a description that has none', () => {
   for (const s of shown) { assert.match(s.values, /\d/, s.nameS); assert.doesNotMatch(s.values, /法强|回复HP|回复MP|（见效果说明）|即死条件/, s.nameS); }
 });
 
+// 2026-09-30 (user: “不动之阵和加速施法的是一起的…直接放在法术伤害里头得了”): the 咏唱 skills of the 法强 tab are in its 法伤 group
+test('法强: 高位魔法咏唱阵、不动之阵、守护咏唱阵、快速咏唱、夏日狂欢 are in the 法伤 group, right after its damage skills', () => {
+  const rows = data.sheets['法强'].lanes[1].rows.filter(r => !r.separator);
+  const group = id => rows.find(r => r.ref === id)?.type;
+  for (const id of [11000, 10900, 27999, 26640, 26495]) assert.equal(group(id), '法伤', id);
+  assert.ok(!rows.some(r => r.type === '施法'));
+  const ids = rows.map(r => r.ref); assert.deepEqual(ids.slice(ids.indexOf(12500), ids.indexOf(12500) + 3), [12500, 11000, 10900]);
+});
+
 // item 22 of the 2026-09-30 review: what a process changes, read from its script, not from the words in its name
 test('classification: effects on the enemy, a heal scaled by 精神, when-used triggers, a stat raised only on the hit', () => {
   const e = id => data.skills[id].cls.e;
