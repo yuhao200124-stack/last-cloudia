@@ -1,10 +1,10 @@
 // Calculator-facing entry point of the battle-script sandbox: builds the attacker and target from the
 // calculator's inputs, replays the game's setup triggers, casts one skill and reports every hit with
 // normal/critical ranges, the damage cap, the attack stat layers and which passives fired.
-import { Battle, K, parseInts } from './battle.mjs?v=20261001-0626';
-import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20261001-0626';
-import { zhName, zhCondition } from './gloss.mjs?v=20261001-0626';
-export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20261001-0626';
+import { Battle, K, parseInts } from './battle.mjs?v=20261001-0636';
+import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20261001-0636';
+import { zhName, zhCondition } from './gloss.mjs?v=20261001-0636';
+export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20261001-0636';
 
 export const TRIGGER_LABELS = { 1: '状态计算', 10: 'Wave开始', 11: 'Wave结束', 12: 'Wave中每帧', 16: '咏唱前', 17: '技能结束时', 18: '技能发动前', 19: '弹道生成前', 20: '弹道处理', 21: '命中时', 22: '被命中时', 23: '伤害计算时', 24: '被伤害计算时', 25: '命中后', 26: '被命中后', 27: '伤害计算后', 28: '被伤害计算后', 29: '命中后（前）', 30: '被命中后（前）', 35: '分割HP归零', 36: '造成致死伤害', 37: '受到致死伤害', 40: 'HP变化', 41: 'SCT变化', 42: 'MP变化', 43: 'STR变化', 44: 'DEF变化', 45: 'INT变化', 46: 'MND变化', 50: '状态异常变化', 51: '角色类型变化', 52: '气绝/Break变化', 53: '咏唱等级变化', 54: 'Buff变化', 55: '必杀量表变化', 59: '单位状态变化', 60: 'Buff持续中', 61: '施加Buff前', 62: '被施加Buff前', 65: '生存人数变化', 66: '地形效果变化', 68: 'Boss Break变化', 69: '生存人数变化2', 70: '按间隔', 71: '按间隔（条件）', 72: '发动方抽选时', 73: '发动方效果前', 74: '发动方效果后', 75: '目标抽选时', 76: '目标效果前', 77: '目标效果后', 78: '施加异常前', 79: '被施加异常前', 80: '获得Zel', 81: '获得宝箱', 92: '流程内触发', 93: '流程内触发（参数）', 94: '背景变化', 95: '时间轴条件', 96: '复活时', 97: '复活对象时', 98: '领域进出' };
 // Triggers the sandbox fires on its own during setup and the cast; everything else is an event the
@@ -187,8 +187,13 @@ export function setupBattle(battle, attacker, target, state = {}) {
   if (state.dateTime) battle.options.dateTime = state.dateTime;
   const all = [attacker, target, ...(state.party || [])];
   for (const u of all) battle.dispatch(K.TRIG.STATUS, u, u);
+  const openingFrom = battle.nextUid;
   for (const u of all) battle.dispatch(K.TRIG.WAVE_START, u, u);
   for (const u of all) battle.dispatch(K.TRIG.CHANGE_SURVIVORS, u, u);
+  // 开局BUFF (tooltip: 战斗/每Wave开始获得的BUFF、永久获得的BUFF（自动X、EX灵气等）…): the buffs the battle start gave, timed or
+  // permanent — off removes these (2026-10-01, user: 开局BUFF showed “本招式没有变化” while 自動大型鼓舞 攻击 +35% is one); buffs
+  // gained later in the set-up (覺醒II when HP drops) are not opening buffs
+  const openingBuffs = new Set(attacker.buffs.filter(b => b.uid >= openingFrom).map(b => b.uid));
   // MP starts full (MP-threshold conditions record where it was), then drops to the chosen MP
   attacker.mp = battle.finalStat(attacker, K.STAT.MAX_MP);
   battle.dispatch(K.TRIG.CHANGE_MP, attacker, attacker);
@@ -197,6 +202,9 @@ export function setupBattle(battle, attacker, target, state = {}) {
   // (2026-10-01 魔神梅莉: the game's settlement attack 8884 = 4191 × (1 + 35% + 47% + 30%) after it fired; 濒死 never fired it)
   attacker.hp = battle.finalStat(attacker, K.STAT.MAX_HP);
   battle.dispatch(K.TRIG.CHANGE_HP, attacker, attacker);
+  // 满血 and 濒死 together (user 2026-10-01: “满血和濒死不能同时触发”): HP first drops to state.hpDip% (濒死 effects such as 覺醒II fire and
+  // keep their buffs), then is back at the chosen HP (100%: the full-HP effects such as 銳氣 hold)
+  if (state.hpDip != null) { attacker.hp = Math.max(1, Math.round(battle.finalStat(attacker, K.STAT.MAX_HP) * state.hpDip / 100)); battle.dispatch(K.TRIG.CHANGE_HP, attacker, attacker); }
   attacker.hp = Math.max(1, Math.round(battle.finalStat(attacker, K.STAT.MAX_HP) * (state.hpPercent ?? 100) / 100));
   attacker.mp = Math.round(battle.finalStat(attacker, K.STAT.MAX_MP) * (state.mpPercent ?? 100) / 100);
   attacker.ether = state.etherPercent ?? 0;
@@ -221,7 +229,7 @@ export function setupBattle(battle, attacker, target, state = {}) {
   }
   if (target.hp != null && state.targetHpPercent != null) target.hp = Math.max(1, Math.round(battle.finalStat(target, K.STAT.MAX_HP) * state.targetHpPercent / 100));
   // Time-limited opening buffs are dropped when the user says the opening window has passed.
-  if (state.openingBuffActive === false) for (const b of attacker.buffs.slice()) if (b.remain > 0) battle.removeBuff(attacker, b.uid);
+  if (state.openingBuffActive === false) for (const b of attacker.buffs.slice()) if (openingBuffs.has(b.uid)) battle.removeBuff(attacker, b.uid);
 }
 
 // A battle report's stats are the unit's values in the battle (statsMeta.alreadyIncludesAppliedBuffs), i.e. the panel with
@@ -476,7 +484,7 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
       const off = probe(p.state), out = new Map();
       for (const [k, t] of on.fired) if (!off.fired.has(k)) out.set(k, { passiveId: t.passiveId || t.localId, localId: t.localId, passiveName: nameOf(t.passiveId || t.localId), processName: zhName(t.name), trigger: t.trigger });
       for (const [k, f] of on.factors) {
-        const g = off.factors.get(k); if (f == null || (g != null && Math.abs(f - g) < 0.0005)) continue;
+        const g = off.factors.get(k); if (f == null || (g != null && Math.abs(f - g) < 0.005)) continue; // (each step is rounded, so a few-point difference is noise)
         const localId = Number(k.split(':')[1]); if ([...out.values()].some(x => x.localId === localId)) continue;
         const t = [...on.fired.values()].find(x => x.localId === localId);
         out.set(`edit:${k}`, { passiveId: t?.passiveId || localId, localId, passiveName: nameOf(t?.passiveId || localId), processName: zhName(t?.name || ''), trigger: t?.trigger ?? 27, stronger: g != null });

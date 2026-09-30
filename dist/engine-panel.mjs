@@ -1,12 +1,12 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
-import { K } from './engine/battle.mjs?v=20261001-0626';
-import { zhName } from './engine/gloss.mjs?v=20261001-0626';
-import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20261001-0626';
-import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20261001-0626';
-import { effectSentence, equipMove, expectedHit, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20261001-0626';
-import { createEvalPool } from './engine-eval-pool.mjs?v=20261001-0626';
+import { K } from './engine/battle.mjs?v=20261001-0636';
+import { zhName } from './engine/gloss.mjs?v=20261001-0636';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20261001-0636';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20261001-0636';
+import { effectSentence, equipMove, expectedHit, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20261001-0636';
+import { createEvalPool } from './engine-eval-pool.mjs?v=20261001-0636';
 // data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
 const V = new URL(import.meta.url).search;
 
@@ -892,7 +892,7 @@ async function gameCharacter(unitDressId) {
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20261001-0626'), import('./engine/engine-data.mjs?v=20261001-0626'), import('./engine/scenario.mjs?v=20261001-0626'), import('./engine/report-adapter.mjs?v=20261001-0626'), import('./engine/loadout-adapter.mjs?v=20261001-0626')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20261001-0636'), import('./engine/engine-data.mjs?v=20261001-0636'), import('./engine/scenario.mjs?v=20261001-0636'), import('./engine/report-adapter.mjs?v=20261001-0636'), import('./engine/loadout-adapter.mjs?v=20261001-0636')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
   if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');
@@ -1270,11 +1270,12 @@ const DUAL_STAGE_LABELS = { core: '核心系数中', beforeCap: '伤害上限前
 function stateFromSwitches(detail) {
   const sel = detail.selection || {};
   const full = sel.fullHp || $('fullHp')?.checked, low = sel.lowHp || $('lowHp')?.checked;
-  const hp = low ? 25 : full ? 100 : 99;
+  // both (user 2026-10-01): down to 25% first (濒死 effects fire), then full again (满血 effects hold)
+  const hp = full ? 100 : low ? 25 : 99, hpDip = full && low ? 25 : null;
   const mp = (sel.mpLow || $('mpLow')?.checked) ? 20 : 100;
   // 特攻 / Break: the switch alone decides (bonuses tied to them still come from the skills)
   const targetBreak = sel.break ?? $('break')?.checked ?? false, ratio = Number($('breakDefenseRatio')?.value);
-  return { hpPercent: hp, mpPercent: mp, openingBuffActive: $('openingBuffActive') ? $('openingBuffActive').checked : true, preCasts: [...supportActive, ...preCastList()],
+  return { hpPercent: hp, hpDip, mpPercent: mp, openingBuffActive: $('openingBuffActive') ? $('openingBuffActive').checked : true, preCasts: [...supportActive, ...preCastList()],
     killer: (sel.specialAttack ?? $('specialAttack')?.checked) ? 'on' : 'off', targetBreak: !!targetBreak, breakDefenseRatio: Number.isFinite(ratio) ? ratio : null,
     targetAilment: !!(sel.enemyAilment ?? $('enemyAilment')?.checked), skillElementOff,
     hitScale: dualScale() };
@@ -1303,8 +1304,8 @@ function arkFinalAdd(ark) { const out = {}; for (const [k, v] of Object.entries(
 const STATE_SWITCH_LABELS = { fullHp: '满血', lowHp: '濒死', mpLow: 'MP≤20', enemyAilment: '敌方异常', openingBuffActive: '开局BUFF', specialAttack: '特攻', break: 'Break' };
 function switchProbes(state) {
   const out = [];
-  if (state.hpPercent === 100) out.push({ id: 'fullHp', state: { ...state, hpPercent: 99 } });
-  if (state.hpPercent === 25) out.push({ id: 'lowHp', state: { ...state, hpPercent: 99 } });
+  if (state.hpPercent === 100) out.push({ id: 'fullHp', state: state.hpDip != null ? { ...state, hpPercent: state.hpDip, hpDip: null } : { ...state, hpPercent: 99 } });
+  if (state.hpPercent === 25 || state.hpDip != null) out.push({ id: 'lowHp', state: { ...state, hpPercent: state.hpDip != null ? 100 : 99, hpDip: null } });
   if (state.mpPercent === 20) out.push({ id: 'mpLow', state: { ...state, mpPercent: 100 } });
   if (state.targetAilment) out.push({ id: 'enemyAilment', state: { ...state, targetAilment: false } });
   if (state.openingBuffActive !== false) out.push({ id: 'openingBuffActive', state: { ...state, openingBuffActive: false } });

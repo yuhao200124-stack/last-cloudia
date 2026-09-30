@@ -90,3 +90,12 @@ test('濒死 fires the “HP crossed 30%” effects: 覺醒II 攻击 +30% (the s
   // that battle's settlement samples at DEF 3400: normal 11,345–12,432, critical 18,102–19,726
   assert.ok(h.normal.min <= 11345 && h.normal.max >= 12432 && h.critical.min <= 18102 && h.critical.max >= 19726);
 });
+
+test('满血 and 濒死 together: 覺醒II fires on the way down, then 銳氣 holds at full HP; 开局BUFF off removes 自動大型鼓舞', async () => {
+  const both = await scenario(1006423, { ...STATE, hpPercent: 100, hpDip: 25 });
+  const h = both.hits.find(x => x.normal && x.element === 6);
+  assert.equal(h.attack, 8884);
+  assert.equal(h.crt, 41);
+  const noOpening = await scenario(1006423, { ...STATE, openingBuffActive: false });
+  assert.equal(noOpening.hits.find(x => x.normal && x.element === 6).attack, 6160, '4191 × (1 + 47%)');
+});

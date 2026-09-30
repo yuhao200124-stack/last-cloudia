@@ -4,9 +4,9 @@
 // `lc:calculator-update` event. The old rule-based calculator (网页旧规则) was removed at the user's request
 // (2026-09-28); moves come from the game data, the hit count is the user's own (default 10), and 圣物属性 add to
 // the final stats.
-import {gameCharacterForSite,gameMoveParameters,loadGameIndex,loadGameCharacter} from './game-data.mjs?v=20261001-0626';
-import {validateBattleEntry} from './battle-report.mjs?v=20261001-0626';
-import {statBlessingPercents} from './account-blessing-store.mjs?v=20261001-0626';
+import {gameCharacterForSite,gameMoveParameters,loadGameIndex,loadGameCharacter} from './game-data.mjs?v=20261001-0636';
+import {validateBattleEntry} from './battle-report.mjs?v=20261001-0636';
+import {statBlessingPercents} from './account-blessing-store.mjs?v=20261001-0636';
 
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -31,7 +31,6 @@ if(!state){
  state={switches:Object.fromEntries(SWITCHES.map(k=>[k,typeof old[k]==='boolean'?old[k]:DEFAULT_SWITCHES[k]])),specialWeapon:old.specialWeapon||'none',move:null,hits:{},dual:{},ark};
 }
 state={switches:{...DEFAULT_SWITCHES,...state.switches},specialWeapon:state.specialWeapon||'none',move:state.move??null,hits:state.hits||{},dual:state.dual||{},ark:state.ark||{},dress:state.dress??null};
-if(state.switches.fullHp&&state.switches.lowHp)state.switches.lowHp=false;
 const save=()=>{try{localStorage.setItem(stateKey,JSON.stringify(state));}catch{}};
 
 // ---- 专武: the character's exclusive gear from the game data (2026-09-30: every character, no hand-made list) — each
@@ -169,8 +168,6 @@ $('calculator').addEventListener('submit',e=>e.preventDefault());
 $('calculator').addEventListener('change',e=>{
  const id=e.target.id;
  if(SWITCHES.includes(id)){
-  if(id==='fullHp'&&$('fullHp').checked)$('lowHp').checked=false;
-  if(id==='lowHp'&&$('lowHp').checked)$('fullHp').checked=false;
   if(!$('dualWield').disabled)state.switches.dualWield=$('dualWield').checked;
   for(const k of SWITCHES)if(k!=='dualWield')state.switches[k]=$(k).checked;
   if(id==='dualWield')syncDual();
