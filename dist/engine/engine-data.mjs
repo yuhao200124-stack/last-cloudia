@@ -1,7 +1,7 @@
 // Loads the sandbox's data: master-table bundles (dist/game-data/engine/*.json) and the captured game
 // scripts (dist/game-data/lua/*.lua). Works in the browser (fetch) and in Node (a `read` function).
-import { Master } from './battle.mjs?v=20261001-0636';
-import { initLua } from './lua-host.mjs?v=20261001-0636';
+import { Master } from './battle.mjs?v=20261001-0649';
+import { initLua } from './lua-host.mjs?v=20261001-0649';
 
 export const SCRIPT_NAMES = ['luaCommon', 'procCondCommon', 'condition', 'process', 'battleScriptCommon'];
 const base = new URL('../game-data/', import.meta.url);

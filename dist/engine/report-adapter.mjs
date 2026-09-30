@@ -2,7 +2,7 @@
 // The report's buff inventory lists every process instance the game created for the unit: its source
 // (affiliation 4 = passive skill, 6/7/8 = weapon/armour/accessory by equipment id), segment index and the
 // parameters actually loaded (blessing levels change them), in the game's own creation order.
-import { K, parseInts } from './battle.mjs?v=20261001-0636';
+import { K, parseInts } from './battle.mjs?v=20261001-0649';
 
 const RESIST_KEYS = { fire: 1, ice: 2, earth: 3, tree: 3, thunder: 4, light: 5, dark: 6 };
 const RACE_CODES = { 战士: 1001, 狙击手: 1002, 骑士: 1003, 魔法师: 1004, 治疗师: 1005, 兽: 2001, 植物: 2002, 昆虫: 2003, 鸟: 2004, 魔法生物: 2005, 不死生物: 2006, 石: 2007, 机械: 2008, 精灵: 2009, 龙: 2010, 神: 2011, 鱼: 2012 };
@@ -88,7 +88,9 @@ export function attackerFromReport(report, master, { unitIndex = 0 } = {}) {
     const p = passives.find(x => x.affiliation === K.AFF.AUTOSKILL && x.id && x.id >= base && x.id < base + 10);
     if (p) personality.push({ passive: p.id, level: p.id - base + 1, base });
   }
-  return { unitDressId: dressId, name: unit.name, charTypes: racesOf(unit), stats: panel, statsSource: panel.source, equips, passives, skills,
+  // every stat set the reader saw (its snapshots and the final values): the calculator's battle start must equal one of them
+  const reportStats = [...(unit.panelSnapshots || []).map(s => s.stats), unit.stats].filter(Boolean).map(statsOf);
+  return { unitDressId: dressId, name: unit.name, charTypes: racesOf(unit), stats: panel, statsSource: panel.source, reportStats, equips, passives, skills,
     elemResist: resistOf(unit.resistances), personality, inventoryCount: (unit.raw?.buffs || []).length };
 }
 

@@ -1,10 +1,10 @@
 // Calculator-facing entry point of the battle-script sandbox: builds the attacker and target from the
 // calculator's inputs, replays the game's setup triggers, casts one skill and reports every hit with
 // normal/critical ranges, the damage cap, the attack stat layers and which passives fired.
-import { Battle, K, parseInts } from './battle.mjs?v=20261001-0636';
-import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20261001-0636';
-import { zhName, zhCondition } from './gloss.mjs?v=20261001-0636';
-export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20261001-0636';
+import { Battle, K, parseInts } from './battle.mjs?v=20261001-0649';
+import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20261001-0649';
+import { zhName, zhCondition } from './gloss.mjs?v=20261001-0649';
+export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20261001-0649';
 
 export const TRIGGER_LABELS = { 1: '状态计算', 10: 'Wave开始', 11: 'Wave结束', 12: 'Wave中每帧', 16: '咏唱前', 17: '技能结束时', 18: '技能发动前', 19: '弹道生成前', 20: '弹道处理', 21: '命中时', 22: '被命中时', 23: '伤害计算时', 24: '被伤害计算时', 25: '命中后', 26: '被命中后', 27: '伤害计算后', 28: '被伤害计算后', 29: '命中后（前）', 30: '被命中后（前）', 35: '分割HP归零', 36: '造成致死伤害', 37: '受到致死伤害', 40: 'HP变化', 41: 'SCT变化', 42: 'MP变化', 43: 'STR变化', 44: 'DEF变化', 45: 'INT变化', 46: 'MND变化', 50: '状态异常变化', 51: '角色类型变化', 52: '气绝/Break变化', 53: '咏唱等级变化', 54: 'Buff变化', 55: '必杀量表变化', 59: '单位状态变化', 60: 'Buff持续中', 61: '施加Buff前', 62: '被施加Buff前', 65: '生存人数变化', 66: '地形效果变化', 68: 'Boss Break变化', 69: '生存人数变化2', 70: '按间隔', 71: '按间隔（条件）', 72: '发动方抽选时', 73: '发动方效果前', 74: '发动方效果后', 75: '目标抽选时', 76: '目标效果前', 77: '目标效果后', 78: '施加异常前', 79: '被施加异常前', 80: '获得Zel', 81: '获得宝箱', 92: '流程内触发', 93: '流程内触发（参数）', 94: '背景变化', 95: '时间轴条件', 96: '复活时', 97: '复活对象时', 98: '领域进出' };
 // Triggers the sandbox fires on its own during setup and the cast; everything else is an event the
@@ -93,6 +93,7 @@ export function addAttacker(battle, spec) {
   unit.panelGiven = spec.panelGiven !== false;
   // the stats are the battle's values with the battle-start buffs on (a battle report): solved back to the panel on first use
   unit.statsInBattle = !!spec.stats?.inBattle && unit.panelGiven;
+  unit.reportStats = spec.reportStats || null;
   unit.grantedPassives = new Set((spec.passives || []).map(p => p.id ?? p));
   grantSkillPassives(battle, unit, [...skills.map(s => s.id), ...(spec.magic || [])]);
   for (const p of dressAddPassives(master, dress)) (battle.sourceNames ||= new Map()).set(p.id, `角色自带被动 ${p.id}`);
@@ -238,24 +239,38 @@ export function setupBattle(battle, attacker, target, state = {}) {
 // calculator had 5657 × 1.82 = 10295). The panel is solved back from them: the battle start at full HP and MP (the report's
 // first snapshot) is played once, and each stat's panel is the value whose final stat with the runtime entries then on is the
 // reported one. Played on a copy; the caller's state is restored.
+const STAT_ZH = { str: '攻击', def: '防御', int: '魔力', mnd: '精神' };
 const CALIBRATED_STATS = [K.STAT.STR, K.STAT.DEF, K.STAT.INT, K.STAT.MND, K.STAT.CRT];
 export function calibrateInBattleStats(battle, attacker, target) {
   const A0 = battle.unit(attacker.id ?? attacker);
-  if (!A0?.statsInBattle || A0.statsCalibrated) return { attacker, target };
+  if (!A0 || A0.statsCalibrated || (!A0.statsInBattle && !A0.reportStats)) return { attacker, target };
   const snap = battle.snapshot(), assumptions = new Set(battle.assumptions);
   let A = battle.unit(A0.id), T = battle.unit(target.id ?? target);
   setupBattle(battle, A, T, { hpPercent: 100, mpPercent: 100 });
   const fixed = {};
-  for (const code of CALIBRATED_STATS) {
+  for (const code of A0.statsInBattle ? CALIBRATED_STATS : []) {
     const want = A.pure[code]; if (want == null) continue;
     // the smallest panel whose final value reaches the reported one (the final value grows with the panel)
     let lo = 0, hi = Math.max(want, 1) * 4;
     while (lo < hi) { const mid = Math.floor((lo + hi) / 2); A.pure[code] = mid; if (battle.finalStat(A, code) >= want) hi = mid; else lo = mid + 1; }
     fixed[code] = lo;
   }
+  // 报告核对 (2026-10-01, user: “为什么这个会出现这么多问题…避免之后出现相同情况”): the battle start the calculator plays must give
+  // stats the reader actually saw in that battle; a stat that matches none of them means the report was read wrongly (buffs
+  // counted twice, a wrong outfit…) and is listed with the result instead of silently giving other damage
+  const mismatch = [];
+  for (const [key, code] of [['str', K.STAT.STR], ['def', K.STAT.DEF], ['int', K.STAT.INT], ['mnd', K.STAT.MND]]) {
+    const seen = [...new Set((A0.reportStats || []).map(s => s?.[key]).filter(v => v != null))]; if (!seen.length) continue;
+    const got = battle.finalStat(A, code);
+    if (!seen.some(v => Math.abs(v - got) <= 1)) mismatch.push(`${STAT_ZH[key]} 计算 ${got}／报告 ${seen.join('、')}`);
+  }
+  // back to the state before, keeping the unit objects the caller holds (restore() makes copies)
+  const held = new Map([...snap.units.keys()].map(id => [id, battle.units.get(id)]));
   battle.restore(snap); battle.assumptions.clear(); for (const a of assumptions) battle.assumptions.add(a);
+  for (const [id, obj] of held) { if (!obj) continue; const fresh = battle.units.get(id); for (const k of Object.keys(obj)) delete obj[k]; Object.assign(obj, fresh); battle.units.set(id, obj); }
   A = battle.unit(A0.id); T = battle.unit(target.id ?? target);
   for (const [code, v] of Object.entries(fixed)) A.pure[code] = v;
+  A.reportMismatch = mismatch;
   A.statsCalibrated = true;
   A.calibratedFrom = Object.fromEntries(Object.keys(fixed).map(c => [c, A0.pure[c]]));
   return { attacker: A, target: T };
@@ -377,6 +392,7 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
   const beforeSetup = probes.length ? battle.snapshot() : null;
   setupBattle(battle, attacker, target, state);
   const setupSnap = battle.snapshot();
+  if (attacker.reportMismatch?.length) battle.assumptions.add(`报告核对不一致（开场满血时）：${attacker.reportMismatch.join('；')}`);
   let instances = [...new Set(assume.instances || [])];
   assumeInstances(battle, attacker, instances, target);
   preCast(battle, attacker, target, state.preCasts, skill.level ?? 9);
