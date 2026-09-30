@@ -3,7 +3,7 @@
 // *Mst tables; scripts drive every passive/buff decision; this file only reproduces the native
 // pieces the scripts call into (ProcControl2, UnitGetValue, BuffControl, ...) and the fixed
 // damage pipeline order established from GameAssembly (ProcessWork.ProcControlDamage/CalcDamage).
-import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20260930-1957';
+import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20260930-1959';
 
 const f32 = Math.fround;
 const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
@@ -353,6 +353,8 @@ export class Battle {
     buff.remain = buff.duration;
     // Same buff group replaces an existing one (a stronger value wins is handled by the scripts; keep the latest).
     if (buff.group) { const old = u.buffs.find(b => b.group === buff.group && b.buffId === buffId); if (old) this.removeBuff(u, old.uid); }
+    // (The game itself — UnitBuffBase.AddBuffNow → RemoveBuffByCategory — lets the newest buff of a category replace the older
+    // ones without comparing strength; the user chose to keep “only the strongest” on 2026-09-30: “只取最强”.)
     // Buffs of one category (BUFF_CATEGORY, 0 = none) do not stack: only the strongest applies (the user's rule,
     // 2026-09-28 — 魔术指导 法强+65% and EX灵气 法强+50% are both 「魔力提升」 category 300 → +65% only). Two buffs of a
     // category with the same operation type are compared by their first differing parameter (by size); a weaker new
