@@ -1,10 +1,10 @@
 // Calculator-facing entry point of the battle-script sandbox: builds the attacker and target from the
 // calculator's inputs, replays the game's setup triggers, casts one skill and reports every hit with
 // normal/critical ranges, the damage cap, the attack stat layers and which passives fired.
-import { Battle, K, parseInts } from './battle.mjs?v=20261001-0607';
-import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20261001-0607';
-import { zhName, zhCondition } from './gloss.mjs?v=20261001-0607';
-export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20261001-0607';
+import { Battle, K, parseInts } from './battle.mjs?v=20261001-0626';
+import { bareStats, crestStats, equipmentStats, exclusiveEquipment, statCodes } from './panel.mjs?v=20261001-0626';
+import { zhName, zhCondition } from './gloss.mjs?v=20261001-0626';
+export { bareStats, crestStats, equipmentStats, exclusiveEquipment, maxLevel, maxAwake, growthRate, KNOWN_GROWTH_RATE } from './panel.mjs?v=20261001-0626';
 
 export const TRIGGER_LABELS = { 1: '状态计算', 10: 'Wave开始', 11: 'Wave结束', 12: 'Wave中每帧', 16: '咏唱前', 17: '技能结束时', 18: '技能发动前', 19: '弹道生成前', 20: '弹道处理', 21: '命中时', 22: '被命中时', 23: '伤害计算时', 24: '被伤害计算时', 25: '命中后', 26: '被命中后', 27: '伤害计算后', 28: '被伤害计算后', 29: '命中后（前）', 30: '被命中后（前）', 35: '分割HP归零', 36: '造成致死伤害', 37: '受到致死伤害', 40: 'HP变化', 41: 'SCT变化', 42: 'MP变化', 43: 'STR变化', 44: 'DEF变化', 45: 'INT变化', 46: 'MND变化', 50: '状态异常变化', 51: '角色类型变化', 52: '气绝/Break变化', 53: '咏唱等级变化', 54: 'Buff变化', 55: '必杀量表变化', 59: '单位状态变化', 60: 'Buff持续中', 61: '施加Buff前', 62: '被施加Buff前', 65: '生存人数变化', 66: '地形效果变化', 68: 'Boss Break变化', 69: '生存人数变化2', 70: '按间隔', 71: '按间隔（条件）', 72: '发动方抽选时', 73: '发动方效果前', 74: '发动方效果后', 75: '目标抽选时', 76: '目标效果前', 77: '目标效果后', 78: '施加异常前', 79: '被施加异常前', 80: '获得Zel', 81: '获得宝箱', 92: '流程内触发', 93: '流程内触发（参数）', 94: '背景变化', 95: '时间轴条件', 96: '复活时', 97: '复活对象时', 98: '领域进出' };
 // Triggers the sandbox fires on its own during setup and the cast; everything else is an event the
@@ -192,6 +192,11 @@ export function setupBattle(battle, attacker, target, state = {}) {
   // MP starts full (MP-threshold conditions record where it was), then drops to the chosen MP
   attacker.mp = battle.finalStat(attacker, K.STAT.MAX_MP);
   battle.dispatch(K.TRIG.CHANGE_MP, attacker, attacker);
+  // HP likewise starts full: “HP crossed a threshold” conditions (HpTrigger) record where it was on their first call and fire
+  // only when it later crosses — 覺醒II “瀕死時恢復大量體力並且攻擊力、防禦力、精神+30%” fires when HP drops to 30% or below
+  // (2026-10-01 魔神梅莉: the game's settlement attack 8884 = 4191 × (1 + 35% + 47% + 30%) after it fired; 濒死 never fired it)
+  attacker.hp = battle.finalStat(attacker, K.STAT.MAX_HP);
+  battle.dispatch(K.TRIG.CHANGE_HP, attacker, attacker);
   attacker.hp = Math.max(1, Math.round(battle.finalStat(attacker, K.STAT.MAX_HP) * (state.hpPercent ?? 100) / 100));
   attacker.mp = Math.round(battle.finalStat(attacker, K.STAT.MAX_MP) * (state.mpPercent ?? 100) / 100);
   attacker.ether = state.etherPercent ?? 0;
@@ -450,6 +455,9 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
       const A = battle.unit(attacker.id), T = battle.unit(target.id), from = battle.trace.length;
       setupBattle(battle, A, T, st); assumeInstances(battle, A, instances, T); preCast(battle, A, T, st.preCasts, level);
       const buffs = new Map(A.buffs.map(b => [b.buffId, b]));
+      // the control entries in force (stat changes such as 銳氣 暴击 +10 at full HP), by the passive that put them
+      const entries = new Map();
+      for (const e of [...A.status, ...A.real]) { const src = battle.sourceOf(e.source), id = src.passiveId || src.localId; if (!id) continue; entries.set(id, (entries.get(id) || '') + `${e.op}:${e.params.join(',')};`); }
       // a normal and a critical hit (effects such as 惡夢三重奏's +36% only act on critical hits)
       const ready = battle.snapshot(), factors = new Map();
       for (const critical of [false, true]) {
@@ -459,7 +467,7 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
         for (const e of res?.edits || []) { factors.set(`${critical ? 'c' : 'n'}:${e.localId}:${e.id}`, prev > 0 ? e.value / prev : null); prev = e.value; }
       }
       const fired = new Map(battle.trace.slice(from).filter(t => t.fired && t.ownerId === A.id && t.localId).map(t => [`${t.localId}:${t.index}`, t]));
-      return { fired, buffs, factors };
+      return { fired, buffs, factors, entries };
     };
     const on = probe(state);
     const nameOf = id => clean(battle.sourceNames?.get(id) || battle.master.passive.get(id)?.NAME || battle.arkNames?.get(id) || battle.master.itemEquip.get(id)?.NAME || '');
@@ -472,6 +480,11 @@ export function runScenario({ battle, attacker, target, skill, state = {}, assum
         const localId = Number(k.split(':')[1]); if ([...out.values()].some(x => x.localId === localId)) continue;
         const t = [...on.fired.values()].find(x => x.localId === localId);
         out.set(`edit:${k}`, { passiveId: t?.passiveId || localId, localId, passiveName: nameOf(t?.passiveId || localId), processName: zhName(t?.name || ''), trigger: t?.trigger ?? 27, stronger: g != null });
+      }
+      for (const [id, sig] of on.entries) {
+        if (off.entries.get(id) === sig || [...out.values()].some(x => x.localId === id || x.passiveId === id)) continue;
+        const t = [...on.fired.values()].find(x => (x.passiveId || x.localId) === id);
+        out.set(`entry:${id}`, { passiveId: id, localId: id, passiveName: nameOf(id), processName: zhName(t?.name || ''), trigger: t?.trigger ?? 1, stronger: off.entries.has(id) });
       }
       for (const [id, b] of on.buffs) if (!off.buffs.has(id)) out.set(`buff:${id}`, { passiveId: b.related?.localId || 0, localId: b.related?.localId || 0, passiveName: nameOf(b.related?.localId), buffName: clean(zhName(b.mst.NAME)), processName: zhName(b.mst.NAME), trigger: 10 });
       switchEffects[p.id] = [...out.values()];

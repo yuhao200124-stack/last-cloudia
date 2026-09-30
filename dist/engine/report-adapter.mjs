@@ -2,7 +2,7 @@
 // The report's buff inventory lists every process instance the game created for the unit: its source
 // (affiliation 4 = passive skill, 6/7/8 = weapon/armour/accessory by equipment id), segment index and the
 // parameters actually loaded (blessing levels change them), in the game's own creation order.
-import { K, parseInts } from './battle.mjs?v=20261001-0607';
+import { K, parseInts } from './battle.mjs?v=20261001-0626';
 
 const RESIST_KEYS = { fire: 1, ice: 2, earth: 3, tree: 3, thunder: 4, light: 5, dark: 6 };
 const RACE_CODES = { 战士: 1001, 狙击手: 1002, 骑士: 1003, 魔法师: 1004, 治疗师: 1005, 兽: 2001, 植物: 2002, 昆虫: 2003, 鸟: 2004, 魔法生物: 2005, 不死生物: 2006, 石: 2007, 机械: 2008, 精灵: 2009, 龙: 2010, 神: 2011, 鱼: 2012 };
@@ -16,9 +16,12 @@ const racesOf = u => (u.raw?.characterTypes?.length ? u.raw.characterTypes : (u.
 // `stats` are the final in-battle values and would double-count buffs.
 export function panelStatsOf(unit) {
   const first = (unit.panelSnapshots || []).find(s => s.elapsedMs === 0) || (unit.panelSnapshots || [])[0];
-  // a snapshot the reader took in the battle (phase “battle-observation”) already has the battle-start buffs on:
-  // scenario.calibrateInBattleStats solves the panel back from it (earlier readers' first snapshot is the entry panel)
-  const inBattle = first?.phase === 'battle-observation';
+  // a snapshot the reader took in the battle (phase “battle-observation”) may already have the battle-start buffs on — then
+  // scenario.calibrateInBattleStats solves the panel back from it. It has them on when no later snapshot is higher: the
+  // 2026-10-01 魔神梅莉 reports had 5657 (with 自動大型鼓舞) from the first snapshot on in one battle, and 4191 then 5657 in the
+  // next (the first read before the wave-start buffs). Earlier readers' first snapshot is the entry panel.
+  const KEYS = ['attack', 'defense', 'intelligence', 'mind', 'critical'];
+  const inBattle = first?.phase === 'battle-observation' && !(unit.panelSnapshots || []).some(s => s !== first && KEYS.some(k => (s.stats?.[k] ?? 0) > (first.stats?.[k] ?? 0)));
   if (first?.stats) return { ...statsOf(first.stats), source: `入场面板快照 ${first.id || ''}${inBattle ? '（战斗中读取，已含开场Buff，已扣除）' : ''}`.trim(), inBattle };
   return { ...statsOf(unit.stats), crt: unit.statsMeta?.criticalRate, source: '战斗最终值（已含Buff）', inBattle: true };
 }

@@ -82,3 +82,11 @@ test('the 聖邪之泛濫 element change can be unticked (then the special keeps
   assert.ok(off.hits.filter(h => h.normal).every(h => h.element !== 6));
   assert.equal(off.elementOverride.passiveId, 27731, 'still listed so it can be ticked again');
 });
+
+test('濒死 fires the “HP crossed 30%” effects: 覺醒II 攻击 +30% (the second 2026-10-01 battle: 剪刀尾巴 attack 8884)', async () => {
+  const out = await scenario(1006423, { ...STATE, hpPercent: 25 });
+  const h = out.hits.find(x => x.normal && x.element === 6);
+  assert.equal(h.attack, 8884);
+  // that battle's settlement samples at DEF 3400: normal 11,345–12,432, critical 18,102–19,726
+  assert.ok(h.normal.min <= 11345 && h.normal.max >= 12432 && h.critical.min <= 18102 && h.critical.max >= 19726);
+});
