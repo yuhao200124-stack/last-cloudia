@@ -33,3 +33,12 @@ test('a chosen accessory adds its stats and its effect', async () => {
   assert.ok(withIt.hits.find(h => h.normal).edits.some(e => e.localId === 304200), 'its passive counts');
   assert.ok(withIt.hits.find(h => h.normal).normal.mean > without.hits.find(h => h.normal).normal.mean);
 });
+
+// 2026-09-30 (user: “下拉的太难找到我要的装备了…写一个添加装备…点击武器…显示有哪些类型…前面写名字，中间写加哪些属性，后面写效果”)
+test('the calculator adds gear through 添加装备 and its page (武器 / 防具 / 饰品 → type → name, stats, effect)', () => {
+  const panel = fs.readFileSync(new URL('../dist/engine-panel.mjs', import.meta.url), 'utf8');
+  assert(panel.includes('id="engineGearAdd" class="secondary">添加装备</button>'));
+  assert(panel.includes('<button type="button" data-gear-tab="weapon">武器</button><button type="button" data-gear-tab="armor">防具</button><button type="button" data-gear-tab="accessory">饰品</button>'));
+  assert(panel.includes('<th>名称</th><th>属性（满级）</th><th>效果</th>'));
+  assert(!panel.includes('data-gear-slot='), 'no drop-down slots any more');
+});
