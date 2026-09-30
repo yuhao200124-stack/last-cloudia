@@ -1,12 +1,12 @@
 // 游戏脚本结算面板：在伤害计算器里用沙盒引擎（游戏自带 Lua 脚本 + 主数据）直接结算所选招式。
 // 输入来自计算器页面（damage-calculator.mjs 的 `lc:calculator-update` 事件）：读取报告、所选招式、局内开关、Boss 栏位、圣物属性。
 // 网页旧规则的结果保持不变，这里只是并列的对照。
-import { K } from './engine/battle.mjs?v=20260930-1541';
-import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1541';
-import { characterGear } from './character-gear.mjs?v=20260930-1541';
-import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1541';
-import { effectSentence, equipMove, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1541';
-import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1541';
+import { K } from './engine/battle.mjs?v=20260930-1549';
+import { accountBlessings, blessingsFromReport, currentBlessingSet, saveBlessingSet } from './account-blessing-store.mjs?v=20260930-1549';
+import { characterGear } from './character-gear.mjs?v=20260930-1549';
+import { BREAKS, breakName, cleanBreaks, scTotal } from './build-sc.mjs?v=20260930-1549';
+import { effectSentence, equipMove, gearFor, isFree, metricOf, splitBuild } from './engine-panel-logic.mjs?v=20260930-1549';
+import { createEvalPool } from './engine-eval-pool.mjs?v=20260930-1549';
 // data files follow this module's own version (?v=…, scripts/set-version.mjs), so a cached old file never meets new code
 const V = new URL(import.meta.url).search;
 
@@ -780,7 +780,7 @@ async function gameCharacter(unitDressId) {
   return characterCache.get(unitDressId);
 }
 async function ensureEngine(unitDressId) {
-  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1541'), import('./engine/engine-data.mjs?v=20260930-1541'), import('./engine/scenario.mjs?v=20260930-1541'), import('./engine/report-adapter.mjs?v=20260930-1541'), import('./engine/loadout-adapter.mjs?v=20260930-1541')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
+  if (!engineModules) engineModules = await Promise.all([import('./engine/battle.mjs?v=20260930-1549'), import('./engine/engine-data.mjs?v=20260930-1549'), import('./engine/scenario.mjs?v=20260930-1549'), import('./engine/report-adapter.mjs?v=20260930-1549'), import('./engine/loadout-adapter.mjs?v=20260930-1549')]).then(([b, d, s, r, l]) => ({ ...b, ...d, ...s, ...r, ...l }));
   if (unitDressId == null) return engineModules;
   if (!battle || loadedDress !== unitDressId) {
     setState('正在读取游戏脚本与主数据…');
@@ -885,7 +885,8 @@ function targetFromFields(detail) {
 // stage (game-data c/<dress>.json: serial, rare, maxPassives). ItemEquipMst only points to the base stage.
 function exclusiveTiers(c) {
   const best = new Map();
-  for (const e of c?.exclusiveEquipment || []) { const k = e.serial ?? e.id, b = best.get(k); if (!b || (e.rare ?? 0) > (b.rare ?? 0) || ((e.rare ?? 0) === (b.rare ?? 0) && e.id > b.id)) best.set(k, e); }
+  for (const e of c?.exclusiveEquipment || []) { if (e.type === '外观' && !e.passives?.length) continue;   // outfits: nothing to compute
+    const k = e.serial ?? e.id, b = best.get(k); if (!b || (e.rare ?? 0) > (b.rare ?? 0) || ((e.rare ?? 0) === (b.rare ?? 0) && e.id > b.id)) best.set(k, e); }
   return [...best.values()];
 }
 const tierOf = c => { const m = new Map(); for (const top of exclusiveTiers(c)) for (const e of c.exclusiveEquipment) if ((e.serial ?? e.id) === (top.serial ?? top.id)) m.set(e.id, top); return m; };

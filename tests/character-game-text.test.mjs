@@ -18,7 +18,9 @@ for(const [siteId,unitDressId] of Object.entries(index.site)){
   const entry=registry.characters[siteId];
   const synced=entry?.generated?buildCharacterPage(siteId,entry,game,relics,problems):syncCharacterPage(siteId,html,game,problems);
   assert.deepEqual(problems,[]);
-  assert.equal(synced,html,'运行 node scripts/sync-character-game-text.mjs 后提交');
+  // the release version tags (scripts/set-version.mjs) are added after the page is written
+  const unversioned=t=>t.replace(/[?&]v=\d{8}-[A-Za-z0-9_-]+/g,'');
+  assert.equal(unversioned(synced),unversioned(html),'运行 node scripts/sync-character-game-text.mjs 后提交');
  });
  test(`character-${siteId}: max stats are the ones recorded in docs/site-characters.json`,()=>{
   const html=read(`dist/character-${siteId}.html`),stats=registry.characters[siteId].maxStats;

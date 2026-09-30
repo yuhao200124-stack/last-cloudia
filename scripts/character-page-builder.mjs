@@ -30,6 +30,8 @@ export function characterPageData(game,relics){
  // Exclusive gear at its highest tier.
  const bySerial=new Map();
  for(const e of game.exclusiveEquipment){
+  // 外观 (outfits): no stats, no passives and no description in the game data — nothing to show or compute (2026-09-30)
+  if(e.type==='外观'&&!e.passives?.length&&!/[1-9]/.test(e.stats||''))continue;
   const key=e.serial??e.id,best=bySerial.get(key);
   if(!best||(e.rare??0)>(best.rare??0)||((e.rare??0)===(best.rare??0)&&e.id>best.id))bySerial.set(key,e);
  }

@@ -76,5 +76,16 @@ else{
 }
 write('dist/characters.html',list);
 
+// 5. the calculator's 专武 selector (dist/character-gear.mjs): every exclusive item at its top tier, weapons first
+const tops=new Map();
+for(const e of game.exclusiveEquipment){if(e.type==='外观'&&!e.passives?.length)continue;const k=e.serial??e.id,b=tops.get(k);if(!b||(e.rare??0)>(b.rare??0)||((e.rare??0)===(b.rare??0)&&e.id>b.id))tops.set(k,e);}
+const WEAPON_TYPES=['剑','斧','枪','锤','弓','机械','爪','杖'];
+const items=[...tops.values()].sort((a,b)=>Number(!WEAPON_TYPES.includes(a.type))-Number(!WEAPON_TYPES.includes(b.type)));
+let gear=read('dist/character-gear.mjs');
+const line=`  '${siteId}': { ${items.map(e=>`'${siteId}-equipment-${e.id}': { name: '${e.nameS}' }`).join(', ')} },`;
+const lineRe=new RegExp(`^  '${siteId}': .*$`,'m');
+gear=lineRe.test(gear)?gear.replace(lineRe,line):gear.replace(/\n};\nexport const characterGear/,`\n${line}\n};\nexport const characterGear`);
+write('dist/character-gear.mjs',gear);
+
 console.log(`已加入 ${game.fullNameS}（网站编号 ${siteId}，unitDressId ${game.unitDressId}）：dist/character-${siteId}.html`);
 if(notices.length)console.warn(`提示（不影响生成）：\n${notices.join('\n')}`);
