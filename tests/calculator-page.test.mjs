@@ -5,7 +5,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { validateBattleEntry } from '../dist/battle-report.mjs';
-import { characterGear } from '../dist/character-gear.mjs';
 
 const read = p => fs.readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -33,10 +32,18 @@ test('the reader report keeps its format checks and the v0.35 MP unit fix', () =
   assert.throws(() => validateBattleEntry({ kind: 'other' }));
 });
 
-test('专武 options name each character\'s real exclusive gear from the game data', () => {
-  for (const [site, dress] of Object.entries(JSON.parse(read('dist/game-data/index.json')).site)) {
-    const names = new Set(JSON.parse(read(`dist/game-data/c/${dress}.json`)).exclusiveEquipment.map(e => e.nameS));
-    for (const g of Object.values(characterGear(site))) assert(names.has(g.name), `${site}: ${g.name}`);
+// 2026-09-30 (user: “所有东西都要是游戏数据”): the 专武 options come from each character's game data (exclusiveEquipment), for every
+// character; the only names written by hand are the old saved choices being carried over, which must still be real items
+test('专武 options come from the game data; old saved choices map to real items', () => {
+  const calc = read('dist/damage-calculator.mjs');
+  assert.match(calc, /function setupSpecialWeaponOptions\(game\)[\s\S]*game\?\.exclusiveEquipment/);
+  assert(!calc.includes('character-gear'));
+  const legacy = JSON.parse(calc.match(/const LEGACY_GEAR=(\{[^}]*\})/)[1].replace(/'/g, '"'));
+  const index = JSON.parse(read('dist/game-data/index.json')).site;
+  for (const [key, name] of Object.entries(legacy)) {
+    const site = key.startsWith('roxy') ? '260' : key.split('-')[0];
+    const names = new Set(JSON.parse(read(`dist/game-data/c/${index[site]}.json`)).exclusiveEquipment.map(e => e.nameS));
+    assert(names.has(name), `${key}: ${name}`);
   }
 });
 

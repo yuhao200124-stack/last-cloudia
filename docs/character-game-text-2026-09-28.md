@@ -25,7 +25,7 @@
    - 登记到 `docs/site-characters.json`，并写入 `dist/game-data/index.json` 的 site（伤害计算器据此读取招式参数）；以后重新导出时 `publish.py` 从登记表写 site；
    - 由 `scripts/character-page-builder.mjs` 按 `scripts/templates/character-page.html` 从游戏数据生成整页 `dist/character-<编号>.html`：个性、专属技能（圣物学不到的）、专属装备（同 SERIAL_NUM 的多阶装备只取 RARE 最高的一阶，最高属性和最高效果用该阶）、通用技能（圣物可学，显示 SC）与超越、魔法（圣物可学的为通用，显示 SC／MP；其余为专属；不可叠加魔法标 data-non-stacking）、特技与超必杀技；名称与说明再由同步脚本写入；
    - 在 `dist/characters.html` 加角色卡、在 `dist/app.js` 的配装角色表加一项；
-   - 在 `dist/character-gear.mjs` 写入计算器“专武”下拉的每件专属装备（最高阶，武器在前）。外观（没有属性、没有被动、没有说明）不列入页面，也不算进专武（2026-09-30 第一个自动生成的角色凯娜雷殊遇到）。
+   - 计算器“专武”下拉直接由游戏数据的专属装备生成（最高阶，武器在前；2026-09-30 起所有角色都这样，原来的手工表 `character-gear.mjs` 已删）。外观（没有属性、没有被动、没有说明）不列入页面，也不算进专武。
    同一角色再运行一次会原地更新；早先手工整理的页面（登记表 generated=false）不会被覆盖。
 3. 以后重新导出游戏数据后运行 `node scripts/sync-character-game-text.mjs`：自动生成的页面会整页重建（游戏里新加的技能也会进来），手工页面只同步名称与说明。
 4. dist 改动照例加保全层、跑全部测试后提交。

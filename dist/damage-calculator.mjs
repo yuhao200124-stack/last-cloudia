@@ -4,10 +4,9 @@
 // `lc:calculator-update` event. The old rule-based calculator (网页旧规则) was removed at the user's request
 // (2026-09-28); moves come from the game data, the hit count is the user's own (default 10), and 圣物属性 add to
 // the final stats.
-import {characterGear} from './character-gear.mjs?v=20260930-1617';
-import {gameCharacterForSite,gameMoveParameters,loadGameIndex,loadGameCharacter} from './game-data.mjs?v=20260930-1617';
-import {validateBattleEntry} from './battle-report.mjs?v=20260930-1617';
-import {statBlessingPercents} from './account-blessing-store.mjs?v=20260930-1617';
+import {gameCharacterForSite,gameMoveParameters,loadGameIndex,loadGameCharacter} from './game-data.mjs?v=20260930-1629';
+import {validateBattleEntry} from './battle-report.mjs?v=20260930-1629';
+import {statBlessingPercents} from './account-blessing-store.mjs?v=20260930-1629';
 
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -35,12 +34,23 @@ state={switches:{...DEFAULT_SWITCHES,...state.switches},specialWeapon:state.spec
 if(state.switches.fullHp&&state.switches.lowHp)state.switches.lowHp=false;
 const save=()=>{try{localStorage.setItem(stateKey,JSON.stringify(state));}catch{}};
 
-// ---- 专武: this character's own exclusive gear by name (character-gear.mjs), plus 全部／其他 ----
-(function setupSpecialWeaponOptions(){
- const select=$('specialWeapon'),entries=Object.entries(characterId?characterGear(characterId):{});
- if(entries.length)select.innerHTML=['<option value="none">未装备</option>',...entries.map(([id,g])=>`<option value="${esc(id)}">${esc(g.name||id)}</option>`),`<option value="both">${esc(entries.map(([,g])=>g.name).filter(Boolean).join('＋')||'都装备')}</option>`,'<option value="other">其他</option>'].join('');
- select.value=[...select.options].some(o=>o.value===state.specialWeapon)?state.specialWeapon:'none';
-})();
+// ---- 专武: the character's exclusive gear from the game data (2026-09-30: every character, no hand-made list) — each
+// item at its top tier (same SERIAL_NUM, highest RARE; 外观 left out), weapons first, then 全部 ----
+// saved choices of the old hand-made lists (by name; only to keep what was picked before)
+const LEGACY_GEAR={'182-equipment-1693':'崇神狂翼基格罗亚','182-equipment-1694':'魔祸呪翼格吉尔斯','259-equipment-42':'艾莉丝之剑','259-equipment-43':'艾莉丝的衣服','roxy-staff':'洛琪希之魔杖','roxy-robe':'洛琪希的衣服'};
+const WEAPON_NAMES=['剑','斧','枪','锤','弓','机械','爪','杖'];
+function setupSpecialWeaponOptions(game){
+ const select=$('specialWeapon'),tops=new Map();
+ for(const e of game?.exclusiveEquipment||[]){if(e.type==='外观'&&!e.passives?.length)continue;const k=e.serial??e.id,b=tops.get(k);if(!b||(e.rare??0)>(b.rare??0)||((e.rare??0)===(b.rare??0)&&e.id>b.id))tops.set(k,e);}
+ const items=[...tops.values()].sort((a,b)=>Number(!WEAPON_NAMES.includes(a.type))-Number(!WEAPON_NAMES.includes(b.type))||(a.type==='饰品')-(b.type==='饰品'));
+ select.innerHTML=['<option value="none">未装备</option>',...items.map(e=>`<option value="eq-${e.id}">${esc(e.nameS)}</option>`),...(items.length>1?[`<option value="both">${esc(items.map(e=>e.nameS).join('＋'))}</option>`]:[])].join('');
+ let v=state.specialWeapon;
+ if(/-equipment-(\d+)$/.test(v||''))v=`eq-${v.match(/-equipment-(\d+)$/)[1]}`;
+ else if(LEGACY_GEAR[v]){const e=items.find(x=>x.nameS===LEGACY_GEAR[v]);v=e?`eq-${e.id}`:'none';}
+ if(v==='both'&&items.length===1)v=`eq-${items[0].id}`;
+ select.value=[...select.options].some(o=>o.value===v)?v:'none';
+ if(select.value!==state.specialWeapon){state.specialWeapon=select.value;save();}
+}
 
 // ---- 01 角色基础资料: the character's maximum six stats (Altema, docs/site-characters.json) and account blessings ----
 const SIX={hp:'HP',mp:'MP',attack:'攻击力',defense:'防御力',intelligence:'法强',mind:'魔抗'};
@@ -193,12 +203,12 @@ document.addEventListener('keydown',e=>{if(embedded&&e.key==='Escape')window.par
 // without a character page: any character of the game data
 async function pickCharacter(dress){
  try{game=dress?await loadGameCharacter(dress):null;}catch{game=null;}
- moves=game?moveList(game):[];renderMoves();syncHits();
+ moves=game?moveList(game):[];setupSpecialWeaponOptions(game);renderMoves();syncHits();
 }
 applySwitches();applyBoss();
 if(characterId){
  try{game=(await gameCharacterForSite(characterId))?.character||null;}catch{game=null;}
- moves=game?moveList(game):[];
+ moves=game?moveList(game):[];setupSpecialWeaponOptions(game);
  renderProfile(game?.fullNameS||game?.nameS);
  // 更新加护 (engine panel): the six-stat line shows the account's current stat blessings
  document.addEventListener('lc:blessings-updated',()=>renderProfile(game?.fullNameS||game?.nameS));

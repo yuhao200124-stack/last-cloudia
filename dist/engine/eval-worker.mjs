@@ -3,10 +3,10 @@
 // these workers run them side by side while the page stays responsive. Each keeps its own Lua VM and master data.
 //   {type:'setup', dress, bundles:{monsters, monsterPassives, crests}}   → loads the character (once per character)
 //   {type:'eval', id, job:{attackerSpec, targetSpec, moveId, firstBullet, state, assume}} → {type:'result', id, metric} | {type:'error', id, message}
-import { Battle } from './battle.mjs?v=20260930-1617';
-import { loadEngineData, loadPassives } from './engine-data.mjs?v=20260930-1617';
-import { addAttacker, addTarget, runScenario } from './scenario.mjs?v=20260930-1617';
-import { metricOf } from '../engine-panel-logic.mjs?v=20260930-1617';
+import { Battle } from './battle.mjs?v=20260930-1629';
+import { loadEngineData, loadPassives } from './engine-data.mjs?v=20260930-1629';
+import { addAttacker, addTarget, runScenario } from './scenario.mjs?v=20260930-1629';
+import { metricOf } from '../engine-panel-logic.mjs?v=20260930-1629';
 
 const V = new URL(import.meta.url).search;
 const BUNDLES = { monsters: 'monsters.json', monsterPassives: 'monster-passives.json', crests: 'crests.json' };
@@ -24,7 +24,8 @@ async function setup(msg) {
 
 async function evaluate({ attackerSpec, targetSpec, moveId, firstBullet, state, assume }) {
   // passives learned from other characters, and the top enhancement stages of the gear, live in id buckets
-  await loadPassives(battle.master, [...attackerSpec.passives.map(p => p.id ?? p), ...Object.values(attackerSpec.equipPassiveIds || {}).flat()]);
+  const gear = (attackerSpec.equips || []).flatMap(e => String(battle.master.itemEquip.get(e.id)?.PASSIVE_SKILL_INFO || '').split(/[:@]/).map(Number)).filter(Boolean);
+  await loadPassives(battle.master, [...attackerSpec.passives.map(p => p.id ?? p), ...Object.values(attackerSpec.equipPassiveIds || {}).flat(), ...gear]);
   battle.reset();
   battle.options.probability = assume.probability;
   const attacker = addAttacker(battle, attackerSpec), target = addTarget(battle, targetSpec);

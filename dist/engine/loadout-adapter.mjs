@@ -3,7 +3,7 @@
 // (personality level, stat pieces), equipped passives, equipment and magic. Bitmasks follow the game's
 // CommonUtil.FlagDecryptor (hex char p, bit 3..0 → index 4p + (3 − bit)); the index is a SWITCH_INDEX which
 // maps back to an id in master row order, first row wins (engine/switch.json).
-import { parseInts } from './battle.mjs?v=20260930-1617';
+import { parseInts } from './battle.mjs?v=20260930-1629';
 
 export const isLoadoutReport = r => !!(r && r.tool === 'LastCloudiaLoadoutReader' && Array.isArray(r.units));
 
