@@ -32,3 +32,32 @@ test('pve-skills: keywords are ANDed, the user sheet filter and the SC limit app
   assert.match(run('pve-skills.mjs', '--sheet', '暴击'), /用户技能表分类：[^\n]*暴击/);
   assert.match(run('pve-skills.mjs', '--id', '100'), /### 体力提升（编号 100，SC 2）\n原文：体力\+5%\n参数：【HP\/MP】倍率=\+5%/);
 });
+
+// scripts/pve-calc.mjs drives the site's own 配装 page in headless Chromium, so its numbers are the calculator's.
+// Skipped where playwright / Chromium is not installed.
+import { createRequire } from 'node:module';
+import fs from 'node:fs';
+const hasBrowser = (() => { try { createRequire(import.meta.url).resolve('playwright'); return fs.existsSync('/opt/pw-browsers/chromium') || !!process.env.PVE_CHROMIUM; } catch { return false; } })();
+
+test('pve-calc: 朱迪 特技3 with both exclusive gear — the page result, and every step of the documented method', { skip: !hasBrowser && 'playwright / Chromium not installed' }, () => {
+  const r = JSON.parse(run('pve-calc.mjs', '朱迪', '--move', '特技3', '--hits', '12', '--json')).result;
+  assert.equal(r.move, '特技3 · 地狱连击'); assert.equal(r.gear, '神灭枪瓦尔迪斯＋斗烈铠迪欧鲁克'); assert.equal(r.hits, '12');
+  assert.deepEqual(r.switchesOn, ['boss', 'openingBuffActive']);
+  assert.equal(r.attack, '20103'); assert.equal(r.critRate, '28'); assert.equal(r.cap, '348,099');
+  assert.equal(r.perHit, '135,636 – 150,678'); assert.equal(r.perHitCrit, '236,030 – 262,260'); assert.equal(r.total, '≈ 2,074,225');
+  // 《PvE接续文档》 3.2's worked example: base = A × 0.9^(D ÷ A × 10), × 系数 × (1 − 耐性) × 随机, then each “伤害 +x%” in turn, rounded each time
+  const A = 20103, D = 4000;
+  let d = Math.trunc(A * 0.9 ** (D / A * 10) * 0.338 * 0.5 * 0.95);
+  assert.equal(d, 2617);
+  for (const x of [60, 80, 30, 40, 30, 50, 30, 30]) d = Math.max(Math.round(d * (1 + x / 100)), 1);
+  assert.equal(d, 45204); // … 魔界的武威, 暴威之岚, 雷兆阶驱动, 葬神之魔枪, 雷攻击提升V, 冥霸的绝击, 近身战斗III, 枪精通III (then 加护, 两手枪, 一天真刃, 枪超阶增幅, 专武 → 143,188)
+});
+
+test('pve-calc: a character without a page is computed from the game data; --each lists what each candidate skill adds', { skip: !hasBrowser && 'playwright / Chromium not installed' }, () => {
+  const kyle = run('pve-calc.mjs', '100010', '--move', '超必杀', '--boss', 'custom', '--def', '2000', '--mnd', '3000');
+  assert.match(kyle, /^# 剑士凯尔 · 最后的勇者\n（这个角色没有角色页/); assert.match(kyle, /目标：自定义目标（[^\n]*防御 2000，魔抗 3000）/); assert.match(kyle, /每段（不暴击）：[\d,]+ – [\d,]+/);
+  const each = run('pve-calc.mjs', '朱迪', '--move', '特技3', '--gear', 'none', '--each', '26468,600');
+  assert.match(each, /专武：未装备/);
+  assert.match(each, /- 雷攻击提升III（26468，SC 13）：整次期望 ≈ [\d,]+（\+30\.0%）/);
+  assert.match(run('pve-calc.mjs', '朱迪', '--list'), /招式（--move）：普通攻击〔1012401〕、特技1 · 贯穿驱动〔1012403〕/);
+});

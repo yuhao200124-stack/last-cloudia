@@ -7,7 +7,7 @@ const open = document.getElementById('damageSimulatorOpen');
 const close = document.getElementById('damageSimulatorClose');
 const backdrop = document.getElementById('damageSimulatorBackdrop');
 const characterId = document.body.dataset.characterId;
-const url = () => `./damage-calculator.html?character=${encodeURIComponent(characterId)}&embedded=1&v=20261005-0001`;
+const url = () => `./damage-calculator.html?character=${encodeURIComponent(characterId)}&embedded=1&v=20261005-0758`;
 function show() {
   panel.hidden = false; backdrop.hidden = false; open.setAttribute('aria-expanded', 'true');
   if (!frame.getAttribute('src')) frame.src = url();
