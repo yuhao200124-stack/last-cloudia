@@ -72,9 +72,9 @@ export function readMatch(dir) {
   const bullets = new Map(), runs = new Map(); let lastHit = null, seq = 0;
   for (const r of rows) {
     const iv = ints(r.intv), frame = Number(r.frame), targ = Number(r.targ_unitId), rel = Number(r.related_unitId); seq++;
-    if (r.typeName === 'GenerateBullet' && iv.length >= 8) bullets.set(iv[4], { caster: targ, target: rel, run: iv[0], level: iv[1], slot: iv[6], index: iv[7] });
+    if (r.typeName === 'GenerateBullet' && iv.length >= 8) { bullets.set(iv[4], { caster: targ, target: rel, run: iv[0], level: iv[1], slot: iv[6], index: iv[7] }); const run = runs.get(iv[0]); if (run && run.caster === targ) { run.firstEffect ??= seq; run.lastEffect = seq; } }
     // 出招（SkillMain）：targ＝出招的人，intv 第 1 个数＝技能在这个人技能表里的编号（ruid），第 2 个＝这次出招的流水号（伤害条目第 19 个数）
-    else if (r.typeName === 'SkillMain') runs.set(iv[1], { seq, frame, caster: targ, target: rel, ruid: iv[0] });
+    else if (r.typeName === 'SkillMain') { const sk = byUid.get(targ)?.skills.find(x => x.ruid != null && x.ruid === iv[0]); runs.set(iv[1], { seq, frame, caster: targ, target: rel, ruid: iv[0], skillId: sk?.skillId ?? null, skillType: sk?.skillType ?? null, firstEffect: null, lastEffect: null }); }
     else if (r.typeName === 'BulletHit') lastHit = { run: iv[0], bullet: iv[1], frame, seq };
     else if (r.typeName === 'UnitStats') { const o = {}; for (let i = 4, n = iv[0]; n > 0 && i + 1 < iv.length; i += 2, n--) o[iv[i]] = iv[i + 1]; stats.push({ frame, unit: targ, head: iv.slice(0, 4), values: o }); } // 能力变化：前三个数是 能力／属性耐性／异常耐性 各有几对，第四个数含义未确认，这里只取能力那几对（0 体力上限 1 法力上限 2 攻击 3 防御 4 魔力 5 精神 8 暴击）
     else if (r.typeName === 'Dead') { dead.push({ frame, unit: targ, by: rel }); life.push({ seq, frame, unit: targ, alive: false }); }
@@ -100,13 +100,22 @@ export function readMatch(dir) {
   // 同一帧里打在同一个目标上的几下，游戏是按这一帧第一下出手前的状态一起算的（第一下引发的“从零开始”不影响同帧的第二下）
   const first = new Map();
   for (const h of hits) { const k = `${h.frame}:${h.target}`; if (!first.has(k)) first.set(k, h.stateSeq); else h.stateSeq = Math.min(h.stateSeq, first.get(k)); }
-  return { meta, units, hits, buffs, dead, stats, life, snapshots, warnings };
+  return { meta, units, hits, buffs, dead, stats, life, snapshots, runs: [...runs.entries()].map(([id, r]) => ({ id, ...r })), warnings };
 }
 
 // 记录里某一下伤害出手前一刻的场上状态：每个角色身上还在的增减益、是否倒下、体力和法力（体力法力取最近一次快照；
 // 这一下的目标用伤害条目自己带的“剩余体力＋扣掉的体力”）。
 export function stateBefore(match, hit) {
-  const out = new Map(match.units.map(u => [u.uid, { buffs: new Map(), alive: true, hp: null, mp: null }]));
+  const out = new Map(match.units.map(u => [u.uid, { buffs: new Map(), alive: true, hp: null, mp: null, acting: null }]));
+  // 正在出招的人：出招（SkillMain）之后、这次出招的第一颗弹道或第一个增减益出来之前＝准备中（魔法的咏唱）；
+  // 之后到最后一颗弹道＝发动中。只看出手的人以外的角色（出手的人由引擎自己从出招算起）。
+  for (const run of match.runs || []) {
+    if (run.seq >= hit.stateSeq || run.caster === hit.attacker) continue; const s = out.get(run.caster); if (!s) continue;
+    if (run.firstEffect == null) continue; // 没有弹道的出招（加增益的魔法等）看不出咏唱到哪一帧结束，不判断
+    if (run.firstEffect >= hit.stateSeq) s.acting = 'standby';
+    else if (run.lastEffect != null && run.lastEffect >= hit.stateSeq) s.acting = 'main';
+    else if (s.acting && run.lastEffect != null && run.lastEffect < hit.stateSeq) s.acting = null;
+  }
   // 出手的人在“出招那一刻到这一下之间”被去掉的增减益（如“特技伤害提升【次数限制】”出招时被用掉）仍算在身上：
   // 引擎是从出招重新算起的，要的是出招前的样子
   for (const b of match.buffs) {

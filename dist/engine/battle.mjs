@@ -3,7 +3,7 @@
 // *Mst tables; scripts drive every passive/buff decision; this file only reproduces the native
 // pieces the scripts call into (ProcControl2, UnitGetValue, BuffControl, ...) and the fixed
 // damage pipeline order established from GameAssembly (ProcessWork.ProcControlDamage/CalcDamage).
-import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20261005-1947';
+import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20261005-1959';
 
 const f32 = Math.fround;
 const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
@@ -655,7 +655,10 @@ export class Battle {
     const killer = this.isKiller(bullet, owner, target);
     let killerPower = 0; for (const e of this.entriesFor(owner, K.OP.KILLER_POWER, { work: true, bullet })) killerPower += e.params[0] || 0;
     const killerFactor = killer ? f32(f32(1.5) * Math.max(f32(1 + f32(killerPower / 10000)), 0)) : 1;
-    let offense = 1; for (const e of this.entriesFor(owner, K.OP.DMG_POWER, { work: true, bullet })) offense = f32(offense * Math.max(f32(1 + f32((e.params[0] || 0) / 10000)), 0));
+    // DmgPower (504) is only ever set by Unit:SetDamagePer — 特定スキル発動中／準備中被ダメージ増減, “damage taken while casting” — so it
+    // multiplies what its holder receives, never what it deals (2026-10-05, arena record: 紅丸's 大元帥 “特技中受伤害 -40%” showed no
+    // ×0.6 in the cores of his own hits). Only entries scripts put on the bullet itself would count as the attacker's.
+    let offense = 1; for (const e of bullet.work) if (e.op === K.OP.DMG_POWER) offense = f32(offense * Math.max(f32(1 + f32((e.params[0] || 0) / 10000)), 0));
     let received = 1; for (const e of this.entriesFor(target, K.OP.DMG_POWER, { work: true })) received = f32(received * Math.max(f32(1 + f32((e.params[0] || 0) / 10000)), 0));
     let reduction = 1; for (const e of this.entriesFor(target, magical ? K.OP.REDUCTION_MAG : K.OP.REDUCTION_PHYS, { work: true })) reduction = f32(reduction * f32(1 - (e.params[0] || 0) / 10000));
     const invalid = this.entriesFor(target, K.OP.INVALID_DMG, { work: true }).length > 0;

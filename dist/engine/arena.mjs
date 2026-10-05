@@ -5,13 +5,13 @@
 //   const arena = await createArena({ units, tables, read, panel })
 //   arena.open()                                           开场（状态计算、Wave 开始、存活人数变化；所有人满体力满法力）
 //   arena.strike(attackerIndex, targetIndex, { skillId, level, critical, random })   打一下（算完恢复原状）
-//     core：把核心值换成对局记录里的那个数（只比核心值之后的部分）；disable：这次不算的效果；fromBehind：从背后命中
+//     core：把核心值换成对局记录里的那个数（只比核心值之后的部分）；disable：这次不算的效果；fromBehind：从背后命中；targetCasting：目标正在出招
 // units：scripts/lib/pvp-record.mjs 的 normalizeUnit() 给出的样子（对局记录或对手列表都转成它）。
 // panel：'given' = 面板直接用 unit.panel（对局记录里的开场前面板）；'calc' = 只凭配装让引擎自己算。
-import { Battle, K } from './battle.mjs?v=20261005-1947';
-import { loadEngineData, loadPassives } from './engine-data.mjs?v=20261005-1947';
-import { addAttacker } from './scenario.mjs?v=20261005-1947';
-import { personalityFromPieces } from './loadout-adapter.mjs?v=20261005-1947';
+import { Battle, K } from './battle.mjs?v=20261005-1959';
+import { loadEngineData, loadPassives } from './engine-data.mjs?v=20261005-1959';
+import { addAttacker } from './scenario.mjs?v=20261005-1959';
+import { personalityFromPieces } from './loadout-adapter.mjs?v=20261005-1959';
 
 export async function loadArenaTables(read) { return read('engine/arena.json'); }
 
@@ -90,7 +90,7 @@ export async function createArena({ units, tables, read, panel = 'given', blessi
       return parseInts(skill.BULLET_INFO).filter(b => b > 1000).filter(b => { const row = master.bulletLevel(b, level); return row && row.PROCESS_INFO.replace(/[:@]/g, ''); });
     },
     // 把场上状态换成对局记录里某一刻的（对账用；配合 strike 的 before，在快照里做，算完自动恢复）。
-    // state[i] = { buffs: [{buffId, duration, params, from(角色序号), affiliation, localId, localIndex, processId}], alive, hp, mp }
+    // state[i] = { buffs: [{buffId, duration, params, from(角色序号), affiliation, localId, localIndex, processId}], alive, hp, mp, acting: 'standby'|'main'|null }
     // 增减益：引擎开场自己加的、记录里也还在的（同一个人、同编号、同来源）保留；记录里已经没有的去掉；记录里有而引擎
     // 没有的按记录的数值加上。体力法力按记录的值，然后触发“体力变化／法力变化／存活人数变化”，让阈值类被动重新判断。
     setState(state) {
@@ -117,6 +117,8 @@ export async function createArena({ units, tables, read, panel = 'given', blessi
           finally { battle.stack.pop(); battle.inProcOnProc = saved; }
         }
       });
+      // 正在出招的人（准备中／发动中）：切到那个状态，让“准备中／发动中受伤害增减”这类被动生效
+      state.forEach((st, i) => { if (st?.acting) battle.setState(arena.unit(i), st.acting === 'standby' ? K.STATE.STANDBY : K.STATE.MAIN); });
       let lifeChanged = false;
       state.forEach((st, i) => { if (!st) return; const u = arena.unit(i); if (st.alive != null && u.alive !== st.alive) { u.alive = st.alive; lifeChanged = true; } });
       state.forEach((st, i) => {
@@ -128,11 +130,13 @@ export async function createArena({ units, tables, read, panel = 'given', blessi
       return report;
     },
     // 打一下：attacker 用 skillId 的一颗弹道打 target；算完恢复原状。before(battle, A, T) 可在出手前改状态（对账用）。
-    strike(ai, ti, { skillId, level = 1, bulletId = null, critical = false, random = 1, before = null, core = null, disable = null, fromBehind = false } = {}) {
+    strike(ai, ti, { skillId, level = 1, bulletId = null, critical = false, random = 1, before = null, core = null, disable = null, fromBehind = false, targetCasting = false } = {}) {
       const snap = battle.snapshot();
       try {
         const A = arena.unit(ai), T = arena.unit(ti);
         if (before) before(battle, A, T);
+        // 目标自己正在出招：它的“出招中受伤害增减”类被动生效（拉达・多尔出招中受伤害 -20%）
+        if (targetCasting) battle.setState(T, K.STATE.MAIN);
         T.dir = fromBehind ? 0 : 1; // 从背后打：引擎没有位置，用“目标背对”表示（出其不意 +50%、骑士领域“正面受击”不生效）
         // disable：这次不算的效果（被动或增减益的流水号 uid；对账时用来找“去掉哪一条就对上”）
         if (disable?.length) { const off = new Set(disable); for (const u of battle.units.values()) { for (const i of u.instances) if (off.has(i.uid)) i.enabled = false; for (const b of u.buffs) if (off.has(b.uid)) b.enabled = false; } }
