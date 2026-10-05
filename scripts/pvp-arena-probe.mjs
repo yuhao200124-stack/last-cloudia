@@ -2,8 +2,12 @@
 // 把一场竞技场对局记录里的八个角色全放进计算器引擎，打开竞技场开关，跑开场，然后：
 //   1. 把引擎算出的进场面板和记录里的进场面板逐项对比；
 //   2. 让一个我方角色的一个技能打一个对方角色，和记录里的同一下伤害对比。
-// 用法：node scripts/pvp-arena-probe.mjs [样本文件] [我方角色名的一部分] [对方角色名的一部分] [技能名的一部分] [entry|calc]
-//   entry（默认）= 面板喂记录里的“初始面板”（开场前）；calc = 只凭配装让引擎自己算面板（赛前没有对手面板时的情形）
+// 用法：node scripts/pvp-arena-probe.mjs [样本文件] [我方角色名的一部分] [对方角色名的一部分] [技能名的一部分] [entry|calc|calc2|calc3|calc4]
+//   entry（默认）= 面板喂记录里的“初始面板”（开场前）
+//   calc  = 只凭配装让引擎自己算面板（赛前没有对手面板时的情形）；装备按最高强化
+//   calc2 = calc ＋ 加护（数值用网站里本账号那份）＋ 装备的实际强化等级
+//   calc3 = calc2，但加护数值用游戏表里的初始值
+//   calc4 = calc2 ＋ 阵型效果（tests/fixtures/pvp/formation-mst.json，游戏的 FormationMst；可用环境变量 FORMATION_JSON 换文件）
 // 说明见 docs/pvp-arena-calculator-2026-10-05.md。
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -16,7 +20,13 @@ const read = async (path, asText) => { const text = fs.readFileSync(ROOT + 'dist
 const arks = JSON.parse(fs.readFileSync(ROOT + 'dist/game-data/arks.json', 'utf8')).items;
 const [file = ROOT + 'tests/fixtures/pvp/arena-20261005-121337.json', atkName = '朱迪', defName = '琉特', skillName = '地狱', mode = 'entry'] = process.argv.slice(2);
 const fx = JSON.parse(fs.readFileSync(file, 'utf8'));
+const { loadPassives } = await import(ROOT + 'dist/engine/engine-data.mjs');
+const { DEFAULT_BLESSINGS } = await import(ROOT + 'dist/account-blessing-default.mjs');
 const { master, scripts } = await loadEngineData({ unitDressIds: [...new Set(fx.units.map(u => u.dress))], read });
+// calc2：再喂加护（记录里只有编号；数值用网站里本账号那份，没有的用游戏表里的初始值）和装备的实际强化等级
+const BLESS = mode === 'calc2' || mode === 'calc3' || mode === 'calc4';
+if (BLESS) await loadPassives(master, fx.units.flatMap(u => u.blessings), read);
+const blessOf = u => !BLESS ? [] : u.blessings.filter(id => master.passive.has(id)).map(id => { const segs = DEFAULT_BLESSINGS.blessings[id]; return mode === 'calc3' || !segs ? { id } : { id, params: Object.fromEntries(Object.entries(segs).map(([i, x]) => [i, x.v])) }; });
 const battle = new Battle(master, scripts, { probability: 'assume' });
 battle.host.setGlobal('isArena', true); // luaCommon.lua: Field:IsPvP() = isArena or isGvG
 function specOf(u) {
@@ -26,12 +36,17 @@ function specOf(u) {
     stats: st ? { hp: st.hp, mp: st.mp, str: st.atk, def: st.def, int: st.matk, mnd: st.mdef, crt: st.critical } : undefined,
     elemResist: st ? Object.fromEntries(st.elem.map((v, i) => [i + 1, v])) : undefined,
     level: u.level, limitBreak: u.limitBreak, awake: u.awake, pieces: 'all',
-    equips: u.equipment.slice(0, 4).map((e, i) => ({ pos: i + 1, id: e.id })).filter(e => e.id),
-    personality, passives: [...u.passives.map(p => ({ id: p.id })), ...personality.map(p => ({ id: p.passive }))],
+    equips: u.equipment.slice(0, 4).map((e, i) => ({ pos: i + 1, id: e.id, level: BLESS ? (u.equipmentLevels.find(x => x.slot === i + 1)?.lv ?? null) : null })).filter(e => e.id),
+    personality, passives: [...u.passives.map(p => ({ id: p.id })), ...personality.map(p => ({ id: p.passive })), ...blessOf(u)],
     crest: u.crest?.id ? { crestId: u.crest.id, traits: (u.crest.slots || []).map(s => s.passiveId).filter(Boolean), maxLevel: true } : null,
     ark: a ? { id: a.id, name: a.name, level: a.level, stats: a.stats, process: a.process } : null }; // 圣物按最高等级（arks.json），没用记录里的等级；加护、装备强化等级也没喂
 }
-const made = fx.units.map(u => { const x = addAttacker(battle, specOf(u)); if (!u.isMine) { x.side = K.SIDE.OPPONENT; x.isBoss = false; } return x; });
+// calc4：再加阵型效果（FormationMst.PROCESS_INFO，每个角色都挂上本队阵型的全部效果段；按位置区分没做）
+const FORM = mode === 'calc4' ? JSON.parse(fs.readFileSync(process.env.FORMATION_JSON || ROOT + 'tests/fixtures/pvp/formation-mst.json', 'utf8')).FormationMst.rows : null;
+const made = fx.units.map(u => { const x = addAttacker(battle, specOf(u)); if (!u.isMine) { x.side = K.SIDE.OPPONENT; x.isBoss = false; }
+  const f = FORM?.find(r => r.NAME === u.formation);
+  if (f) battle.addProcesses(x, { affiliation: K.AFF.FORMATION, localId: f.FORMATION_ID, level: 1, processes: master.processSegments(f.PROCESS_INFO).map((seg, i) => ({ ...seg, localIndex: i })) });
+  return x; });
 const ai = fx.units.findIndex(u => u.isMine && u.name.includes(atkName)), di = fx.units.findIndex(u => !u.isMine && u.name.includes(defName));
 const A = made[ai], D = made[di];
 setupBattle(battle, A, D, { party: made.filter(x => x !== A && x !== D) });
