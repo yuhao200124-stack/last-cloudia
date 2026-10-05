@@ -3,7 +3,7 @@
 // *Mst tables; scripts drive every passive/buff decision; this file only reproduces the native
 // pieces the scripts call into (ProcControl2, UnitGetValue, BuffControl, ...) and the fixed
 // damage pipeline order established from GameAssembly (ProcessWork.ProcControlDamage/CalcDamage).
-import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20261005-0758';
+import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20261005-1947';
 
 const f32 = Math.fround;
 const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
@@ -469,6 +469,10 @@ export class Battle {
     let used = 0;
     behaviours.forEach((b, i) => { if (b in slot && inst.params[i] != null) { params[slot[b]] = inst.params[i]; used++; } });
     if (!used) inst.params.forEach((v, i) => { if (i < 4) params[i] = v; });
+    // keyed controls keep their parameters in order — ElemResist (307) {element, value}, StatusResist (306) {ailment, value}:
+    // 雷耐性提升 (30704, behaviours [key, VAL], parameters 4, 20) is 雷 +20, not “element 20” (2026-10-05, arena record:
+    // 拉達・多爾's 雷耐性 80 in the game's damage log, 60 here)
+    else if ((op === K.OP.ELEM_RESIST || op === K.OP.STATUS_RESIST) && behaviours.length >= 2 && !(behaviours[0] in slot)) { params.fill(0); inst.params.forEach((v, i) => { if (i < 4) params[i] = v; }); }
     const src = inst.mst.SOURCE || K.TS.SUBJECT_WORK, dst = inst.mst.TARGET || (inst.kind === 'buff' ? K.TS.UNIT_REAL : K.TS.SUBJECT_REAL);
     const dstUnit = dst === K.TS.UNIT_REAL || dst === K.TS.UNIT_WORK ? (inst.kind === 'buff' ? owner.id : ctx.target) : owner.id;
     this.procControl(src, owner.id, dst, dstUnit, op, params, inst.kind === 'buff' ? K.LIFE.NORMAL : K.LIFE.NORMAL, false);
@@ -579,7 +583,7 @@ export class Battle {
     const segments = lvRow ? this.master.processSegments(lvRow.PROCESS_INFO) : [];
     const weaponElem = owner.equips.find(e => e.pos === 1)?.elem ?? 0;
     const element = spec.elementOverride ?? (skill.weaponElem && skill.elem === 0 ? weaponElem : skill.elem);
-    const b = { uid: this.nextUid++, owner: owner.id, target: target.id, skillId: spec.skillId, skill, bulletId: spec.bulletId, level: spec.level ?? 1, lvRow, segments, dmgRatio: spec.dmgRatio ?? 10000, hitIndex: spec.hitIndex ?? 0, element, work: [], values: {}, edits: [], damage: 0, orgDamage: 0, lastDamage: 0, critical: !!spec.critical, random: spec.random ?? 1, killer: false, puid: this.timeline && this.timeline.skillId === spec.skillId && this.timeline.owner === owner.id ? this.timeline.puid : this.nextUid++, instances: [], results: [] };
+    const b = { uid: this.nextUid++, owner: owner.id, target: target.id, skillId: spec.skillId, skill, bulletId: spec.bulletId, level: spec.level ?? 1, lvRow, segments, dmgRatio: spec.dmgRatio ?? 10000, hitIndex: spec.hitIndex ?? 0, element, work: [], values: {}, edits: [], damage: 0, orgDamage: 0, lastDamage: 0, critical: !!spec.critical, random: spec.random ?? 1, coreOverride: spec.coreOverride ?? null, killer: false, puid: this.timeline && this.timeline.skillId === spec.skillId && this.timeline.owner === owner.id ? this.timeline.puid : this.nextUid++, instances: [], results: [] };
     b.instances = segments.map((seg, i) => this.makeInstance({ owner: owner.id, affiliation: K.AFF.NONE, localId: spec.bulletId, localIndex: i, processId: seg.processId, prob: seg.prob, params: seg.params })).filter(Boolean);
     this.dispatch(K.TRIG.BEFORE_CREATE_BULLET, owner, target, b);
     return b;
@@ -669,6 +673,8 @@ export class Battle {
     const exponent = attack > 0 ? f32(f32(defense / attack) * (critical ? 6 : 10)) : 0;
     const base = attack > 0 ? f32(f32(Math.pow(f32(0.9), exponent)) * attack) : 0;
     let damage = elementFactor <= 0 || invalid ? 0 : Math.trunc(f32(f32(base * q) * f32(bullet.random)));
+    // spec.coreOverride (对账用): the core value of a recorded hit, so everything after the core is compared on the same number
+    if (bullet.coreOverride != null && damage > 0) damage = bullet.coreOverride;
     bullet.orgDamage = damage; bullet.damage = damage; bullet.killer = killer;
     const core = { attack, defense, element, resist, elementFactor, killer, killerFactor, offense, received, reduction, per, dmgRatio: bullet.dmgRatio, critical, random: bullet.random, base, q, coreDamage: damage };
     // what this very hit gets (the move's own bonuses included): its critical rate and the parts of its attack stat
@@ -728,13 +734,24 @@ export class Battle {
     const owner = this.unit(bullet.owner);
     const out = new Set();
     if (bullet.skill.killer) out.add(bullet.skill.killer);
-    for (const e of [...owner.status, ...owner.real, ...owner.work, ...bullet.work]) if (e.op === K.OP.KILLER && e.params[0]) out.add(e.params[0]);
+    // Killer {type, off}: Bullet:SetKiller(type, false) — the target's 無效化XX類型特攻 buffs (buff308xx) switch that type's killer
+    // off for this bullet (2026-10-05, arena record: no killer on 拉達・多爾 while he had 神族护罩)
+    const entries = [...owner.status, ...owner.real, ...owner.work, ...bullet.work].filter(e => e.op === K.OP.KILLER && e.params[0]);
+    for (const e of entries) if (!e.params[1]) out.add(e.params[0]);
+    for (const e of entries) if (e.params[1]) out.delete(e.params[0]);
     if (this.options.killer === 'on') for (const t of this.charTypesOf(this.unit(bullet.target))) out.add(t);
     return [...out];
   }
   // A target the user gave no race still has one in the game; with the killer forced on it stands in as
   // UNKNOWN_RACE so the scripts' "for each race of the target" loops have something to match.
-  charTypesOf(u) { if (!u) return []; return u.charTypes.length || this.options.killer !== 'on' || u.side !== K.SIDE.OPPONENT ? u.charTypes.slice() : [K.UNKNOWN_RACE]; }
+  // 类型追加 (control 814, P_キャラタイプ追加: the 擬態 skills, 追加XX类型 debuffs) joins the unit's own type — the game's
+  // GetUnitCharType lists them all (2026-10-05, arena record: 紅丸's 魔國聯邦 counted 13 types on a team whose 塞拉 wore 11 擬態)
+  charTypesOf(u) {
+    if (!u) return [];
+    const out = u.charTypes.slice();
+    for (const e of [...u.status, ...u.real]) if (e.op === 814 && e.params[0] && !out.includes(e.params[0])) out.push(e.params[0]);
+    return out.length || this.options.killer !== 'on' || u.side !== K.SIDE.OPPONENT ? out : [K.UNKNOWN_RACE];
+  }
   isKiller(bullet, owner, target) {
     if (this.options.killer === 'on') return true;
     if (this.options.killer === 'off') return false;
@@ -780,7 +797,7 @@ export class Battle {
       GetMasterInfo(masterType, id, paramNo, subId) {
         if (masterType === K.MASTER.SKILL) { const s = B.master.skillInfo(id); return s ? new LuaTable(Object.entries(s)) : null; }
         if (masterType === K.MASTER.BUFF) { const m = B.master.buff.get(id); return m ? new LuaTable(Object.entries({ buffId: m.BUFF_ID, name: m.NAME, condition: m.PROCESS_COND, condParam: parseInts(m.PROCESS_COND_PARAM), method: m.OPE_WAY, ope: m.PROCESS_OPE_TYPE, source: m.SOURCE, target: m.TARGET, script: m.USE_SCRIPT === 1, buffType: m.BUFF_TYPE, category: m.BUFF_CATEGORY, group: m.BUFF_GROUP, iconId: m.BUFF_ICON_ID, description: '' })) : null; }
-        if (masterType === K.MASTER.UNIT_DRESS) { const d = B.master.unitDress.get(id); if (!d) return null; if (paramNo === 1) { const ps = parseInts(d.PERSONAL_SKILL); return ps[subId - 1] ?? 0; } return new LuaTable(Object.entries({ unitDressId: d.UNIT_DRESS_ID, name: d.NAME, unitId: d.UNIT_ID, characterType: d.CHARACTER_TYPE, personalSkill: parseInts(d.PERSONAL_SKILL), group: parseInts(d.CHARACTER_INFO) })); }
+        if (masterType === K.MASTER.UNIT_DRESS) { const d = B.master.unitDress.get(id); if (!d) return null; if (paramNo === 1) { const ps = parseInts(d.PERSONAL_SKILL); return ps[subId - 1] ?? 0; } /* UNIT_DRESS_MST_INFO_PERSONAL_SKILL_ID (120): the whole list, which Field:GetPersonalSkillId indexes — 個性LV条件 effects such as 慈悲之盾 (2026-10-05) */ if (paramNo === 120) return new LuaTable(parseInts(d.PERSONAL_SKILL).map((v, i) => [i + 1, v])); return new LuaTable(Object.entries({ unitDressId: d.UNIT_DRESS_ID, name: d.NAME, unitId: d.UNIT_ID, characterType: d.CHARACTER_TYPE, personalSkill: parseInts(d.PERSONAL_SKILL), group: parseInts(d.CHARACTER_INFO) })); }
         B.log('native-partial', 'GetMasterInfo', masterType, id, paramNo, subId); return null;
       },
       GetBattleInfo(kind) { switch (kind) { case 4: return 0; case 5: return B.options.questId ?? 0; case 6: return 0; case 7: return 0; case 10: return B.options.questType ?? 0; case 700: return false; case 900: return [B.options.difficulty ?? 0]; case 1001: return false; default: B.log('native-partial', 'GetBattleInfo', kind); return 0; } },
@@ -832,7 +849,7 @@ export class Battle {
       UnitGetSelectWeight() { return 100; }, UnitTotalSelectWeight() { return 100; },
       // the unit's ailments as the scripts read them ({[type] = true}); set by the calculator's 敌方异常 switch
       UnitGetBadStatus(t) { return Object.fromEntries((B.unit(t)?.ailments || []).map(a => [a, true])); },
-      UnitGetRadius() { return 1; }, UnitGetDir() { return 1; }, UnitGetPos() { return multi(0, 0, 0); },
+      UnitGetRadius() { return 1; }, UnitGetDir(t) { return B.unit(t)?.dir ?? 1; }, /* facing: 1 right (default), 0 left — with every position 0 a unit facing left is hit from behind (arena.strike fromBehind) */ UnitGetPos() { return multi(0, 0, 0); },
       UnitGetOpacity() { return 1; }, UnitGetScale() { return multi(1, 1, 1); },
       UnitGetTriggers() { return new LuaTable(); },
       UnitGetChangedAlives() { return []; },
@@ -942,7 +959,7 @@ export class Battle {
         return B.runInstance(inst, owner, target, c.bullet, inst.trigger || c.trigger);
       },
       RaiseProcTrigger(targ, trigger) { const u = B.unit(targ); if (u) B.dispatch(trigger, u, u, null); },
-      ProcEditProcDamage(v) { const b = curBullet(); if (!b) return false; const c = cur(); b.damage = Math.max(0, Math.trunc(v)); b.edits.push({ value: b.damage, by: c?.inst?.mst?.NAME, id: c?.processId, localId: c?.localId }); B.log('edit-damage', v); return true; },
+      ProcEditProcDamage(v) { const b = curBullet(); if (!b) return false; const c = cur(); b.damage = Math.max(0, Math.trunc(v)); b.edits.push({ value: b.damage, by: c?.inst?.mst?.NAME, id: c?.processId, localId: c?.localId, localIndex: c?.localIndex, owner: c?.ownUnit, uid: c?.uid }); B.log('edit-damage', v); return true; },
       ProcGetProcDamage() { return curBullet()?.damage ?? 0; },
       ProcGetOrgProcDamage() { return curBullet()?.orgDamage ?? 0; },
       ProcGetLastDamage() { return curBullet()?.lastDamage ?? 0; },
@@ -966,7 +983,10 @@ export class Battle {
       BulletGetSkillTarget(mode) { return curBullet()?.target ?? 0; },
       BulletGetSkillType(mode, comp, exp) { const b = curBullet(); if (!b) return null; if (comp == null) return b.skill.skillType; return compare(mode, comp, b.skill.skillType, expandSkillTypes); },
       BulletGetSkillRole(mode, comp) { const b = curBullet(); if (!b) return null; if (comp == null) return b.skill.skillRole.slice(); return compare(mode, comp, b.skill.skillRole, v => [v]); },
-      BulletGetElement(mode, comp, exp) { const b = curBullet(); if (!b) return null; const el = B.bulletElement(b); if (comp == null) return el; return compare(mode, comp, el, v => (v < 0 ? (ELEMENT_EXPANSION[v] || []) : [v]), false); },
+      BulletGetElement(mode, comp, exp) { const b = curBullet(); if (!b) return null; const el = B.bulletElement(b); if (comp == null) return el; /* the script hands over its own expansion table with the weapon-relative codes filled in (ELEMENT_ANY_WEAPON_NOT_NONE -8 … = the wielder's
+         weapon elements): 両手驅動『斧槍機』 “与装备中的武器的属性相同的属性攻击 +15%” (2026-10-05, arena record) */
+        const fromScript = v => { const t = exp && typeof exp.get === 'function' ? exp.get(v) : null; return t == null ? null : listOf(t); };
+        return compare(mode, comp, el, v => (v < 0 ? (fromScript(v) || ELEMENT_EXPANSION[v] || []) : [v]), false); },
       BulletGetValue(statType, isSample, isFinal) { const b = curBullet(); if (!b) return 0; const u = B.unit(b.owner); if (isFinal === false) return u.pure[statType] ?? 0; return B.finalStat(u, statType, { work: true, bullet: isSample ? null : b }); },
       BulletGetProperty(uid, prop, ...args) {
         const b = curBullet(); if (!b) return null;
