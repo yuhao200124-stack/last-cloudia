@@ -56,6 +56,23 @@ export function normalizeUnit(u, index) {
   };
 }
 
+// 对手列表（PvPOpponents.json 的 opponents[n].units[k]）里的一个角色 → 同样的样子。没有面板、没有个性等级、没有技能等级：
+// 面板由引擎凭配装算，个性按能力盘全开，技能等级按游戏表的上限。
+export function normalizeOpponentUnit(u, opponent, k) {
+  const lv = Object.fromEntries(String(u.equipmentLevels || '').split('-').map(x => x.split(':').map(Number)).filter(x => x.length === 2));
+  return {
+    index: 4 + k, uid: 101 + k, isMine: false, partyType: 2, name: u.dressName, dressName: u.dressName, dress: u.dress,
+    level: u.lv, limitBreak: u.lmtLv, awake: u.awakeLv,
+    ark: u.ark?.id ? { id: u.ark.id, level: u.ark.lv, skillLevel: u.ark.skillLv, name: u.ark.name || '' } : null, arkStats: null,
+    equipment: (u.equipment || []).filter(e => e.slot <= 4 && e.id).map(e => ({ slot: e.slot, id: e.id, name: e.name, lv: lv[e.slot] ?? null })),
+    passives: (u.passives || []).map(p => ({ id: p.id, name: p.name })), magics: (u.magics || []).map(m => ({ id: m.id, name: m.name })),
+    blessings: (u.blessings || []).map(b => b.id ?? b),
+    crest: u.crest?.id ? { id: u.crest.id, name: u.crest.name, traits: (u.crest.slots || []).filter(x => x.passiveId).map(x => ({ passive: x.passiveId, rank: x.rank, name: x.name })) } : null,
+    personality: [], skills: [], formationId: u.formationId || opponent.formationId, formationName: opponent.formationName, formationPos: u.deckNo ?? k,
+    hidden: !!u.hidden, naked: null, panel: null, panelSource: null, entry: null, entryFrame: null, entryHp: null, entryMp: null,
+  };
+}
+
 export function readMatch(dir) {
   const warnings = [];
   const text = name => fs.readFileSync(path.join(dir, name), 'utf8');

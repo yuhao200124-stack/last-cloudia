@@ -71,3 +71,15 @@ test('对账脚本：能跑完，面板 40／40，输出里带每组的结论', 
   assert.ok(out.groups.length >= 2 && out.groups.every(g => g.verdict));
   assert.equal(out.unsupported.length, 0);
 });
+
+test('对阵表：我方取自一场记录、对手取自对手列表，双方每个招式都有数，对手面板凭配装算出来', () => {
+  const out = JSON.parse(execFileSync('node', [ROOT + 'scripts/pvp-matchup.mjs', '--opponents', ROOT + 'tests/fixtures/pvp/opponents-sample.json', '--index', '0', '--mine-from', DIR, '--json'], { encoding: 'utf8', maxBuffer: 1 << 26 }));
+  assert.equal(out.panels.length, 8);
+  assert.deepEqual(out.opponent.units, ['红丸', '爱蜜莉雅', '朱迪卡萨梅克', '塞拉']);
+  assert.ok(out.panels.every(p => p.hp > 5000 && p.atk > 0));
+  const mine = out.rows.filter(r => r.side === '我方'), theirs = out.rows.filter(r => r.side === '对方');
+  assert.ok(mine.length >= 16 && theirs.length >= 16);
+  const r = mine.find(x => x.attacker === '朱迪卡萨梅克' && x.skill === '地狱连击' && x.target === '爱蜜莉雅');
+  assert.ok(r.perHit[0] > 1000 && r.perHitCritical[0] >= r.perHit[0] && r.cap >= r.perHitCritical[1] && r.hitsPerCast.median >= 1);
+  assert.equal(out.unsupported.length, 0);
+});

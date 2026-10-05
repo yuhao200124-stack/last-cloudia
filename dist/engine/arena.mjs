@@ -8,10 +8,10 @@
 //     core：把核心值换成对局记录里的那个数（只比核心值之后的部分）；disable：这次不算的效果；fromBehind：从背后命中；targetCasting：目标正在出招
 // units：scripts/lib/pvp-record.mjs 的 normalizeUnit() 给出的样子（对局记录或对手列表都转成它）。
 // panel：'given' = 面板直接用 unit.panel（对局记录里的开场前面板）；'calc' = 只凭配装让引擎自己算。
-import { Battle, K } from './battle.mjs?v=20261005-2041';
-import { loadEngineData, loadPassives } from './engine-data.mjs?v=20261005-2041';
-import { addAttacker } from './scenario.mjs?v=20261005-2041';
-import { personalityFromPieces } from './loadout-adapter.mjs?v=20261005-2041';
+import { Battle, K } from './battle.mjs?v=20261005-2047';
+import { loadEngineData, loadPassives } from './engine-data.mjs?v=20261005-2047';
+import { addAttacker } from './scenario.mjs?v=20261005-2047';
+import { personalityFromPieces } from './loadout-adapter.mjs?v=20261005-2047';
 
 export async function loadArenaTables(read) { return read('engine/arena.json'); }
 
@@ -42,7 +42,7 @@ export function arenaUnitSpec(master, u, { tables, panel = 'given', blessingPara
   return {
     name: (u.isMine ? '我方' : '对方') + u.name, unitDressId: u.dress, panelGiven: !!given,
     stats: st ? { hp: st.hp, mp: st.mp / MP_SCALE, str: st.atk, def: st.def, int: st.matk, mnd: st.mdef, crt: st.critical } : undefined,
-    elemResist: st ? Object.fromEntries(st.elem.map((v, i) => [i + 1, v])) : undefined,
+    elemResist: u.elemBase ? Object.fromEntries(u.elemBase.map((v, i) => [i + 1, v])) : st ? Object.fromEntries(st.elem.map((v, i) => [i + 1, v])) : undefined,
     level: u.level, limitBreak: u.limitBreak, awake: u.awake, pieces: 'all',
     equips: (u.equipment || []).map(e => ({ pos: e.slot, id: e.id, level: e.lv ?? null })),
     skills: (u.skills || []).map(s => ({ type: s.skillType, id: s.skillId, level: s.lv })),
@@ -83,9 +83,11 @@ export async function createArena({ units, tables, read, panel = 'given', blessi
       for (const [i, u] of made.entries()) { u.mp = Math.min(battle.finalStat(u, K.STAT.MAX_MP), (units[i].entryMp ?? ARENA_START_MP) / MP_SCALE); battle.dispatch(K.TRIG.CHANGE_MP, u, u); battle.dispatch(55, u, u); }
       // 属性耐性：实战记录里“开场前面板”的属性耐性其实已经含开场增减益（回放记录的不含），直接喂会重复算。
       // 所以面板用记录的时候，开场后把每个属性的基础值校到“引擎开场后的耐性＝记录里进场时的耐性”。
-      if (panel === 'given') made.forEach((u, i) => { const want = units[i].entry?.elem; if (!want) return; for (let e = 1; e <= 6; e++) { const d = want[e - 1] - battle.elemResist(u, e, { work: false }); if (d) { u.elemResist[e] = (u.elemResist[e] || 0) + d; (arena.elemCalibrated ||= []).push({ unit: u.name, element: e, delta: d }); } } });
+      if (panel === 'given') made.forEach((u, i) => { const want = units[i].elemBase ? null : units[i].entry?.elem; if (!want) return; for (let e = 1; e <= 6; e++) { const d = want[e - 1] - battle.elemResist(u, e, { work: false }); if (d) { u.elemResist[e] = (u.elemResist[e] || 0) + d; (arena.elemCalibrated ||= []).push({ unit: u.name, element: e, delta: d }); } } });
       return arena;
     },
+    // 开场后的属性耐性基础值（不含增减益），给别的对阵复用：[炎,冰,树,雷,光,暗]
+    elemBaseOf(i) { const u = arena.unit(i); return [1, 2, 3, 4, 5, 6].map(e => u.elemResist[e] || 0); },
     panelOf(i) { const u = arena.unit(i); return Object.fromEntries(STAT_KEYS.map(([k, code]) => [k, Math.round(battle.finalStat(u, code))])); },
     // 这个技能会造成伤害的弹道
     damageBullets(skillId, level) {
