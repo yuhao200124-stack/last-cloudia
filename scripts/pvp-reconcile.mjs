@@ -24,7 +24,7 @@ const read = async (p, asText) => { const t = fs.readFileSync(ROOT + 'dist/game-
 const args = process.argv.slice(2);
 const flag = n => { const i = args.indexOf('--' + n); if (i < 0) return false; args.splice(i, 1); return true; };
 const opt = n => { const i = args.indexOf('--' + n); if (i < 0) return null; const v = args[i + 1]; args.splice(i, 2); return v; };
-const asJson = flag('json'), explain = flag('explain'), replay = !flag('opening'), only = opt('only'), maxFrame = Number(opt('max-frame') ?? Infinity), detail = opt('detail'), panelMode = opt('panel') || 'given';
+const asJson = flag('json'), explain = flag('explain'), replay = !flag('opening'), only = opt('only'), showRaw = flag('raw'), maxFrame = Number(opt('max-frame') ?? Infinity), detail = opt('detail'), panelMode = opt('panel') || 'given';
 const dir = args[0];
 if (!dir) { console.error('用法：node scripts/pvp-reconcile.mjs <对局文件夹> [--panel calc] [--explain] [--detail 名字] [--json]'); process.exit(1); }
 
@@ -96,13 +96,14 @@ for (const h of m.hits) {
   // 正面还是背后命中记录里没有（位置每 15 帧才记一次）：两种都算，取更接近记录的那个，并记下是哪一种
   let f = engineHit(h, { core: h.core, targetCasting: casting }), behind = false;
   const fb = engineHit(h, { core: h.core, fromBehind: true, targetCasting: casting });
+  const fFront = f.damage, fBack = fb ? fb.damage : null;
   if (fb && fb.damage !== f.damage && Math.abs(Math.log(fb.damage / h.damage)) < Math.abs(Math.log(f.damage / h.damage))) { f = fb; behind = true; }
   const finalRatio = f.damage / h.damage;
   const small = h.core < TOLERANCE.minCore; if (small) skipped.small++;
   // 伤害上限：引擎这一下顶到了上限、或记录的数比引擎的上限还高，说明两边的上限不一样，单独归一类
   const capDiff = f.damage !== h.damage && (f.damage >= f.cap || h.damage > f.cap);
   const status = capDiff ? 'cap' : f.damage === h.damage ? 'exact' : Math.abs(finalRatio - 1) <= TOLERANCE.finalSame ? 'same' : Math.abs(finalRatio - 1) <= TOLERANCE.finalNear ? 'near' : 'off';
-  g.hits.push({ h, e, f, status: small ? 'small' : status, coreOk, coreRatio, finalRatio, behind, casting, capped: f.damage >= f.cap });
+  g.hits.push({ h, e, f, status: small ? 'small' : status, coreOk, coreRatio, finalRatio, behind, casting, fFront, fBack, capped: f.damage >= f.cap });
 }
 const median = a => { const s = [...a].sort((x, y) => x - y); return s.length ? s[Math.floor(s.length / 2)] : null; };
 function summarize(g) {
@@ -152,7 +153,7 @@ console.log('\n| 攻击者 | 技能 | 目标 | 下数 | 状态对不上 | 比了
 for (const r of table) console.log(`| ${r.attacker} | ${r.skill} | ${r.target} | ${r.hits} | ${r.stateChanged}${r.stateDiff.length ? `（${r.stateDiff.join('、')}）` : ''} | ${r.compared} | ${r.exact} | ${r.same} | ${r.near} | ${r.off} | ${r.capDiff} | ${r.finalRatio == null ? '—' : r.finalRatio.toFixed(2)} | ${r.verdict}${r.explain ? (r.explain.remove ? `：去掉「${r.explain.remove.join('」和「')}」后和记录相差 1.5% 以内` : '：去掉一两条也凑不出记录的数') : ''} |`);
 if (result.notes.length) console.log('\n注：' + result.notes.join('；'));
 if (result.unsupported.length) console.log('引擎还没实现的原生函数：' + result.unsupported.join('、'));
-if (flag('hits')) for (const r of table) { console.log(`\n${r.key}`); for (const x of r.g.hits) console.log(`  第 ${x.h.frame} 帧${x.h.critical ? ' 暴击' : ''}：记录 核心值 ${x.h.core} 最终 ${x.h.damage}` + (x.f ? `；引擎 核心值 ${x.e.coreDamage} 最终 ${x.f.damage}（${(x.finalRatio * 100).toFixed(1)}%${x.behind ? '，按背后命中' : ''}${x.casting ? '，按目标正在出招' : ''}${x.capped ? '，到上限' : ''}）` : x.diff ? `；状态对不上：${x.diff.join('；')}` : '')); }
+if (flag('hits')) for (const r of table) { console.log(`\n${r.key}`); for (const x of r.g.hits) console.log(`  第 ${x.h.frame} 帧${x.h.critical ? ' 暴击' : ''}：记录 核心值 ${x.h.core} 最终 ${x.h.damage}` + (x.f ? `；引擎 核心值 ${x.e.coreDamage} 最终 ${x.f.damage}（${(x.finalRatio * 100).toFixed(1)}%${x.behind ? '，按背后命中' : ''}${x.casting ? '，按目标正在出招' : ''}${showRaw ? ' raw ' + JSON.stringify(x.h.raw) + (x.fFront ? ' 正面' + (x.fFront / x.h.damage * 100).toFixed(0) + '% 背后' + (x.fBack / x.h.damage * 100).toFixed(0) + '%' : '') : ''}${x.capped ? '，到上限' : ''}）` : x.diff ? `；状态对不上：${x.diff.join('；')}` : '')); }
 if (detail) {
   const r = table.find(r => r.key.includes(detail) && r.g.hits.some(x => x.f)) || table.find(r => r.key.includes(detail));
   const x = r?.g.hits.find(x => x.f) || r?.g.hits.find(x => x.e);

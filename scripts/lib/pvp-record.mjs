@@ -90,7 +90,7 @@ export function readMatch(dir) {
       const skill = (run && run.caster === rel && A.skills.find(s => s.ruid != null && s.ruid === run.ruid)) || (g ? skillOfSlot(A, g.slot, g.index) : null);
       const killer = ev[8] >= 10000, o = killer ? 9 : 8;
       // stateSeq：这一下“出手前”的界线——命中条目（BulletHit）那一行；它和伤害条目之间记下的增减益是这一下自己引发的（如“从零开始”）
-      hits.push({ seq, stateSeq: g ? lastHit.seq : seq, run: iv[18], castSeq: run && run.caster === rel ? run.seq : null, frame, attacker: rel, target: targ, damage: iv[0], serial: iv[3], critical: !!(iv[19] & 256), hitKind: iv[14], hpRemoved: iv[21], hpLeft: iv[22],
+      hits.push({ seq, stateSeq: g ? lastHit.seq : seq, run: iv[18], castSeq: run && run.caster === rel ? run.seq : null, frame, attacker: rel, target: targ, damage: iv[0], serial: iv[3], critical: !!(Number(r.flag) & 256) /* 暴击＝flag 列的 256 位（三场 570 下按公式反推核对：暴击 92 下全带、非暴击 478 下全不带；intv 第 20 个数的 256 不是暴击） */, hitKind: iv[14], hpRemoved: iv[21], hpLeft: iv[22], raw: { flag: Number(r.flag), i7: iv[7], i12: iv[12], i13: iv[13], i14: iv[14], i15: iv[15], i17: iv[17], i19: iv[19] },
         slot: g ? g.slot : null, slotIndex: g ? g.index : null, skillId: skill?.skillId ?? null, skillName: skill?.name ?? null, skillLv: skill?.lv ?? null, skillType: skill?.skillType ?? null,
         attack: ev[3], defense: ev[4], coef: ev[5] / 10, coefAfter: ev[6] / 10, core: ev[7], killer: killer ? ev[8] / 10000 : 0, element: ev[o], resist: ev[o + 1] / 100 });
     }
@@ -99,7 +99,12 @@ export function readMatch(dir) {
   if (fs.existsSync(path.join(dir, 'PvPSnapshots.csv'))) for (const r of parseCsv(text('PvPSnapshots.csv'))) { const uid = Number(r.uid); if (byUid.has(uid)) snapshots.push({ frame: Number(r.frame), unit: uid, hp: Number(r.hp), mp: Number(r.mp) }); }
   // 同一帧里打在同一个目标上的几下，游戏是按这一帧第一下出手前的状态一起算的（第一下引发的“从零开始”不影响同帧的第二下）
   const first = new Map();
-  for (const h of hits) { const k = `${h.frame}:${h.target}`; if (!first.has(k)) first.set(k, h.stateSeq); else h.stateSeq = Math.min(h.stateSeq, first.get(k)); }
+  for (const h of hits) {
+    const k = `${h.frame}:${h.target}`, hp = h.hpLeft != null && h.hpRemoved != null && h.hpRemoved <= 100000000 ? h.hpLeft + h.hpRemoved : null;
+    if (!first.has(k)) first.set(k, { seq: h.stateSeq, hp });
+    else h.stateSeq = Math.min(h.stateSeq, first.get(k).seq);
+    h.targetHpBefore = first.get(k).hp; // 目标在这一帧第一下之前的体力
+  }
   return { meta, units, hits, buffs, dead, stats, life, snapshots, runs: [...runs.entries()].map(([id, r]) => ({ id, ...r })), warnings };
 }
 
@@ -125,6 +130,6 @@ export function stateBefore(match, hit) {
   }
   for (const e of match.life) { if (e.seq >= hit.stateSeq) break; const s = out.get(e.unit); if (s) s.alive = e.alive; }
   for (const sn of match.snapshots) { if (sn.frame > hit.frame) break; const s = out.get(sn.unit); if (s) { s.hp = sn.hp; s.mp = sn.mp; } }
-  const t = out.get(hit.target); if (t && hit.hpLeft != null && hit.hpRemoved != null && hit.hpRemoved <= 100000000) t.hp = hit.hpLeft + hit.hpRemoved;
+  const t = out.get(hit.target); if (t && hit.targetHpBefore != null) t.hp = hit.targetHpBefore;
   return out;
 }
