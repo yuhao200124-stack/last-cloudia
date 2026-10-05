@@ -2,7 +2,8 @@
 
 **竞技场对阵表第一版（2026-10-05 续；网页未改）**：`node scripts/pvp-matchup.mjs --opponents <PvPOpponents.json> --index N --mine-from <对局文件夹> [--calibrate] [--json]`，字段和核对结果见[方案末尾](pvp-arena-calculator-2026-10-05.md)。我方取自一场记录（面板准），对手凭配装算（±10%）；朱迪的招式和记录差 20% 内，其他角色差 2～4 倍的都有，**只能看量级**。测试 156 个。
 - 对账新认出：暴击＝伤害条目 `flag` 列的 256 位（不是 intv 第 20 个数）；实战记录的开场前面板属性耐性已含开场增减益（`arena.open()` 按进场耐性校基础值）；同帧多下用第一下之前的目标体力。
-- 还差的大头：自动格挡整套没有做（`BulletWasGuarded` 恒为否）；加护数值本账号只有 48／154 个是真值（`dist/account-blessing-default.mjs` 是从洛琪希战报取的），伤害上限因此少 7,100；读取器要补“每个人实际生效的被动参数”和“这一下是否被格挡”。
+- 自动格挡已做进引擎（`battle.guardInfo`、`strike` 的 `guarded`；被格挡＝伤害条目 `flag` 的 0x200；格挡后 = floor((1−减伤比例)×伤害)，在上限之后）；`flag` 各位含义写在 `scripts/lib/pvp-record.mjs`。测试 157 个。
+- 还差的大头：加护数值本账号只有 48／154 个是真值（`dist/account-blessing-default.mjs` 是从洛琪希战报取的），伤害上限因此少 7,100；读取器要补“每个人实际生效的被动参数”和“这一下是否被格挡”。
 
 **竞技场计算升级：第 0 步做完，第 1 步工具做完、最终伤害还没对上（2026-10-05，用户：“开始吧，你俩自己商量吧”；网页未改）**：[进度写在方案末尾](pvp-arena-calculator-2026-10-05.md)。
 - 新增 `dist/engine/arena.mjs`（两队八人、`isArena`、开场、`strike` 打一下、`setState` 按记录重放状态）、`dist/game-data/engine/arena.json`（阵型表＋圣物每一级，`local-migration-tools/game-data/arena-tables.py` 生成）、`scripts/lib/pvp-record.mjs`（读对局文件夹）、`scripts/pvp-reconcile.mjs`（对账器，参数和 `--json` 字段见方案末尾）、`tests/pvp-arena.test.mjs`（6 个，总数 155）。`runScenario` 和现有网页没动。

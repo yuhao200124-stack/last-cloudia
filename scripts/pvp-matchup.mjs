@@ -6,7 +6,7 @@
 // --calibrate：先对 --mine-from 那一场跑一遍对账（按开场状态，要 1 分钟左右），把“这一招引擎是记录的几倍”标在每一行；
 //   结果存在系统临时目录，下次同一场不用再跑。不加这个参数、又没有存过的，标“没对过”。
 // 算的是“开场状态下打一下”：所有人满体力、法力 5 点、开场增减益都在；随机取中间值 0.95。
-// 每一行给：正面命中 不暴击／暴击、从背后命中 不暴击（背后差别大的招式才有意义）、暴击率、伤害上限、
+// 每一行给：正面命中 不暴击／暴击、从背后命中 不暴击（背后差别大的招式才有意义）、被格挡时的伤害和格挡几率、暴击率、伤害上限、
 // 记录里这招一次出招打几下（只有 --mine-from 那一场出现过的招式有）、目标开场体力、按不暴击算几下打掉。
 // 这些数的可信程度见 docs/pvp-arena-calculator-2026-10-05.md 末尾：进场面板和核心值是准的，最终伤害目前只能当量级。
 import fs from 'node:fs';
@@ -85,10 +85,12 @@ function oneSide(from, to) {
     const run = (extra) => { let lo = Infinity, hi = 0, last = null; for (const b of sk.bullets) { const r = arena.strike(ai, ti, { skillId: sk.id, level: sk.level, bulletId: b, random: RANDOM, ...extra })[0]; if (!r || r.cancelled) continue; lo = Math.min(lo, r.damage); hi = Math.max(hi, r.damage); last = r; } return last ? { lo, hi, r: last } : null; };
     const n = run({}), c = run({ critical: true }), b = directional[ai] || directional[ti] ? run({ fromBehind: true }) : null;
     if (!n) continue;
+    // 目标会自动格挡的：再算一遍“这一下被格挡”（格挡几率是开场时的；魔法要目标另有魔法格挡，这里按物理算）
+    const guard = arena.guardOf(ti), gd = guard.can ? run({ guarded: true }) : null;
     const hp = arena.panelOf(ti).hp, per = hitsPerCast.get(sk.id) || null, crt = Math.max(0, Math.min(100, n.r.crt));
     const expected = (1 - crt / 100) * (n.lo + n.hi) / 2 + crt / 100 * (c ? (c.lo + c.hi) / 2 : (n.lo + n.hi) / 2);
     rows.push({ side: units[ai].isMine ? '我方' : '对方', attacker: units[ai].dressName, skill: sk.name, skillId: sk.id, skillType: sk.type === 5 ? '超必杀' : '特技', target: units[ti].dressName,
-      perHit: [n.lo, n.hi], perHitCritical: c ? [c.lo, c.hi] : null, perHitFromBehind: b ? [b.lo, b.hi] : null, critRate: crt, cap: n.r.cap, killer: !!n.r.killer, resist: n.r.resist,
+      perHit: [n.lo, n.hi], perHitCritical: c ? [c.lo, c.hi] : null, perHitFromBehind: b ? [b.lo, b.hi] : null, perHitGuarded: gd ? [gd.lo, gd.hi] : null, guardChance: guard.can ? Math.round(guard.chance * 100) : 0, critRate: crt, cap: n.r.cap, killer: !!n.r.killer, resist: n.r.resist,
       attack: n.r.attack, defense: n.r.defense, expectedPerHit: Math.round(expected), hitsPerCast: per, targetHp: hp, hitsToKill: n.hi > 0 ? Math.ceil(hp / ((n.lo + n.hi) / 2)) : null,
       castShare: per ? Math.round(expected * per.median / hp * 100) : null, trust: trustOf(units[ai], sk.id) });
   }
@@ -104,8 +106,8 @@ console.log(`对阵：我方（取自 ${src.meta.match}）对 第 ${indexArg} �
 console.log('说明：开场状态下打一下，随机取 0.95；对手面板是凭配装算的（±10% 上下）；最终伤害目前只能当量级，看最右一列的对账结论。\n');
 console.log('开场面板：'); for (const p of panels) console.log(`  ${p.side}${p.unit}：体力 ${p.hp}，攻击 ${p.atk}，防御 ${p.def}，魔力 ${p.matk}，精神 ${p.mdef}（${p.source}）`);
 for (const side of ['我方', '对方']) {
-  console.log(`\n${side}打${side === '我方' ? '对方' : '我方'}：\n| 出手 | 招式 | 目标 | 每下（不暴击） | 每下（暴击） | 从背后（不暴击） | 暴击率 | 上限 | 一次出招几下 | 目标体力 | 几下打掉 | 一次出招占体力 | 对账 |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|`);
-  for (const r of rows.filter(r => r.side === side)) console.log(`| ${r.attacker} | ${r.skill}（${r.skillType}） | ${r.target} | ${range(r.perHit)}${r.killer ? '（特攻）' : ''} | ${range(r.perHitCritical)} | ${r.perHitFromBehind && r.perHitFromBehind[1] !== r.perHit[1] ? range(r.perHitFromBehind) : '同正面'} | ${r.critRate}% | ${r.cap.toLocaleString('en')} | ${r.hitsPerCast ? `${r.hitsPerCast.median}（记录 ${r.hitsPerCast.casts} 次）` : '没记录'} | ${r.targetHp.toLocaleString('en')} | ${r.hitsToKill ?? '—'} | ${r.castShare == null ? '—' : r.castShare + '%'} | ${r.trust.text} |`);
+  console.log(`\n${side}打${side === '我方' ? '对方' : '我方'}：\n| 出手 | 招式 | 目标 | 每下（不暴击） | 每下（暴击） | 从背后（不暴击） | 被格挡时（格挡几率） | 暴击率 | 上限 | 一次出招几下 | 目标体力 | 几下打掉 | 一次出招占体力 | 对账 |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|`);
+  for (const r of rows.filter(r => r.side === side)) console.log(`| ${r.attacker} | ${r.skill}（${r.skillType}） | ${r.target} | ${range(r.perHit)}${r.killer ? '（特攻）' : ''} | ${range(r.perHitCritical)} | ${r.perHitFromBehind && r.perHitFromBehind[1] !== r.perHit[1] ? range(r.perHitFromBehind) : '同正面'} | ${r.perHitGuarded ? `${range(r.perHitGuarded)}（${r.guardChance}%）` : '不会格挡'} | ${r.critRate}% | ${r.cap.toLocaleString('en')} | ${r.hitsPerCast ? `${r.hitsPerCast.median}（记录 ${r.hitsPerCast.casts} 次）` : '没记录'} | ${r.targetHp.toLocaleString('en')} | ${r.hitsToKill ?? '—'} | ${r.castShare == null ? '—' : r.castShare + '%'} | ${r.trust.text} |`);
 }
 if (result.notes.length) console.log('\n注：' + result.notes.join('；'));
 if (result.unsupported.length) console.log('引擎还没实现的原生函数：' + result.unsupported.join('、'));

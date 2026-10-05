@@ -5,13 +5,13 @@
 //   const arena = await createArena({ units, tables, read, panel })
 //   arena.open()                                           开场（状态计算、Wave 开始、存活人数变化；所有人满体力满法力）
 //   arena.strike(attackerIndex, targetIndex, { skillId, level, critical, random })   打一下（算完恢复原状）
-//     core：把核心值换成对局记录里的那个数（只比核心值之后的部分）；disable：这次不算的效果；fromBehind：从背后命中；targetCasting：目标正在出招
+//     core：把核心值换成对局记录里的那个数（只比核心值之后的部分）；disable：这次不算的效果；fromBehind：从背后命中；targetCasting：目标正在出招；guarded：这一下被格挡；targetBreak：目标在 Break 中
 // units：scripts/lib/pvp-record.mjs 的 normalizeUnit() 给出的样子（对局记录或对手列表都转成它）。
 // panel：'given' = 面板直接用 unit.panel（对局记录里的开场前面板）；'calc' = 只凭配装让引擎自己算。
-import { Battle, K } from './battle.mjs?v=20261005-2047';
-import { loadEngineData, loadPassives } from './engine-data.mjs?v=20261005-2047';
-import { addAttacker } from './scenario.mjs?v=20261005-2047';
-import { personalityFromPieces } from './loadout-adapter.mjs?v=20261005-2047';
+import { Battle, K } from './battle.mjs?v=20261005-2057';
+import { loadEngineData, loadPassives } from './engine-data.mjs?v=20261005-2057';
+import { addAttacker } from './scenario.mjs?v=20261005-2057';
+import { personalityFromPieces } from './loadout-adapter.mjs?v=20261005-2057';
 
 export async function loadArenaTables(read) { return read('engine/arena.json'); }
 
@@ -86,6 +86,8 @@ export async function createArena({ units, tables, read, panel = 'given', blessi
       if (panel === 'given') made.forEach((u, i) => { const want = units[i].elemBase ? null : units[i].entry?.elem; if (!want) return; for (let e = 1; e <= 6; e++) { const d = want[e - 1] - battle.elemResist(u, e, { work: false }); if (d) { u.elemResist[e] = (u.elemResist[e] || 0) + d; (arena.elemCalibrated ||= []).push({ unit: u.name, element: e, delta: d }); } } });
       return arena;
     },
+    // 这个人的自动格挡：{ can 能不能格挡, chance 几率, ratio 格挡时减掉的比例 }（物理；魔法要另有“魔法格挡”）
+    guardOf(i, magical = false) { return battle.guardInfo(arena.unit(i), magical); },
     // 开场后的属性耐性基础值（不含增减益），给别的对阵复用：[炎,冰,树,雷,光,暗]
     elemBaseOf(i) { const u = arena.unit(i); return [1, 2, 3, 4, 5, 6].map(e => u.elemResist[e] || 0); },
     panelOf(i) { const u = arena.unit(i); return Object.fromEntries(STAT_KEYS.map(([k, code]) => [k, Math.round(battle.finalStat(u, code))])); },
@@ -135,20 +137,22 @@ export async function createArena({ units, tables, read, panel = 'given', blessi
       return report;
     },
     // 打一下：attacker 用 skillId 的一颗弹道打 target；算完恢复原状。before(battle, A, T) 可在出手前改状态（对账用）。
-    strike(ai, ti, { skillId, level = 1, bulletId = null, critical = false, random = 1, before = null, core = null, disable = null, fromBehind = false, targetCasting = false } = {}) {
+    strike(ai, ti, { skillId, level = 1, bulletId = null, critical = false, random = 1, before = null, core = null, disable = null, fromBehind = false, targetCasting = false, guarded = false, targetBreak = false } = {}) {
       const snap = battle.snapshot();
       try {
         const A = arena.unit(ai), T = arena.unit(ti);
         if (before) before(battle, A, T);
         // 目标自己正在出招：它的“出招中受伤害增减”类被动生效（拉达・多尔出招中受伤害 -20%）
         if (targetCasting) battle.setState(T, K.STATE.MAIN);
+        // 目标在 Break 中：它的 Break 类被动生效
+        if (targetBreak && !(T.breakRemain > 0)) { T.breakRemain = 600; battle.dispatch(K.TRIG.BREAK_CHANGE, T, T); }
         T.dir = fromBehind ? 0 : 1; // 从背后打：引擎没有位置，用“目标背对”表示（出其不意 +50%、骑士领域“正面受击”不生效）
         // disable：这次不算的效果（被动或增减益的流水号 uid；对账时用来找“去掉哪一条就对上”）
         if (disable?.length) { const off = new Set(disable); for (const u of battle.units.values()) { for (const i of u.instances) if (off.has(i.uid)) i.enabled = false; for (const b of u.buffs) if (off.has(b.uid)) b.enabled = false; } }
         const bullets = bulletId ? [bulletId] : arena.damageBullets(skillId, level).slice(0, 1);
         if (!bullets.length) return [];
         battle.beginSkill(A, T, skillId);
-        const bl = battle.createBullet(A, T, { skillId, bulletId: bullets[0], level, critical, random, coreOverride: core });
+        const bl = battle.createBullet(A, T, { skillId, bulletId: bullets[0], level, critical, random, coreOverride: core, guarded });
         battle.hit(bl);
         return bl.results.map(r => ({ ...r, bulletId: bullets[0] }));
       } finally { battle.restore(snap); }

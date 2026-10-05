@@ -23,6 +23,9 @@ export function parseCsv(text) {
 const ints = s => String(s ?? '').split(';').filter(x => /^-?\d+$/.test(x)).map(Number);
 const STAT = s => s && s.hp > 0 && s.hp < 2000000000 ? { hp: s.hp, mp: s.mp, atk: s.atk, def: s.def, matk: s.matk, mdef: s.mdef, critical: s.critical, elem: (s.elem || []).slice(0, 6), ailment: (s.ailment || []).slice() } : null;
 
+// 伤害条目 flag 列的各位（游戏的 LogFlag，从程序元数据里读出的值；0x100 以下几位的值没有逐个核对）：
+//   0x2 目标在右侧  0x100 暴击  0x200 被格挡  0x400 NormalDamage  0x800 目标在 Break 中  0x1000 未命中  0x2000 被抵抗  0x4000 特攻
+//   0x20000 无敌  0x40000 保命（从零开始之类）  0x80000 无伤害  0x200000 顶到伤害上限(Clipped)  0x400000 DirectHit  0x4000000 霸体
 // 弹道的出招格（GenerateBullet 第 7、8 个数；和 PvPActions.csv 的 skillSlot、skillIndex 一致）→ 这个角色的哪个技能
 //   0 = 普通攻击；1～3 = 第几个特技；4 = 超必杀（没在记录里见过，按顺序推的）；5 起 = 第几个魔法
 export function skillOfSlot(unit, slot, index) {
@@ -107,7 +110,7 @@ export function readMatch(dir) {
       const skill = (run && run.caster === rel && A.skills.find(s => s.ruid != null && s.ruid === run.ruid)) || (g ? skillOfSlot(A, g.slot, g.index) : null);
       const killer = ev[8] >= 10000, o = killer ? 9 : 8;
       // stateSeq：这一下“出手前”的界线——命中条目（BulletHit）那一行；它和伤害条目之间记下的增减益是这一下自己引发的（如“从零开始”）
-      hits.push({ seq, stateSeq: g ? lastHit.seq : seq, run: iv[18], castSeq: run && run.caster === rel ? run.seq : null, frame, attacker: rel, target: targ, damage: iv[0], serial: iv[3], critical: !!(Number(r.flag) & 256) /* 暴击＝flag 列的 256 位（三场 570 下按公式反推核对：暴击 92 下全带、非暴击 478 下全不带；intv 第 20 个数的 256 不是暴击） */, hitKind: iv[14], hpRemoved: iv[21], hpLeft: iv[22], raw: { flag: Number(r.flag), i7: iv[7], i12: iv[12], i13: iv[13], i14: iv[14], i15: iv[15], i17: iv[17], i19: iv[19] },
+      hits.push({ seq, stateSeq: g ? lastHit.seq : seq, run: iv[18], castSeq: run && run.caster === rel ? run.seq : null, frame, attacker: rel, target: targ, damage: iv[0], serial: iv[3], critical: !!(Number(r.flag) & 256) /* 暴击＝flag 列的 256 位（三场 570 下按公式反推核对：暴击 92 下全带、非暴击 478 下全不带；intv 第 20 个数的 256 不是暴击） */, guarded: !!(Number(r.flag) & 0x200), inBreak: !!(Number(r.flag) & 0x800), clipped: !!(Number(r.flag) & 0x200000), saveLife: !!(Number(r.flag) & 0x40000), killerFlag: !!(Number(r.flag) & 0x4000), hitKind: iv[14], hpRemoved: iv[21], hpLeft: iv[22], raw: { flag: Number(r.flag), i7: iv[7], i12: iv[12], i13: iv[13], i14: iv[14], i15: iv[15], i17: iv[17], i19: iv[19] },
         slot: g ? g.slot : null, slotIndex: g ? g.index : null, skillId: skill?.skillId ?? null, skillName: skill?.name ?? null, skillLv: skill?.lv ?? null, skillType: skill?.skillType ?? null,
         attack: ev[3], defense: ev[4], coef: ev[5] / 10, coefAfter: ev[6] / 10, core: ev[7], killer: killer ? ev[8] / 10000 : 0, element: ev[o], resist: ev[o + 1] / 100 });
     }

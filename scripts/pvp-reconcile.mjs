@@ -53,6 +53,7 @@ function recordedState(h) {
 }
 let replayReport = { added: 0, removed: 0, failed: new Set() };
 function engineHit(h, extra = {}) {
+  extra = { guarded: h.guarded, targetBreak: h.inBreak, ...extra };
   const ai = idx.get(h.attacker), ti = idx.get(h.target);
   if (replay && !extra.before) { const state = recordedState(h); extra = { ...extra, before: () => { const r = arena.setState(state); replayReport.added += r.added; replayReport.removed += r.removed; for (const f of r.failed) replayReport.failed.add(f); } }; }
   const bullets = arena.damageBullets(h.skillId, h.skillLv); if (!bullets.length) return null;
@@ -153,7 +154,7 @@ console.log('\n| 攻击者 | 技能 | 目标 | 下数 | 状态对不上 | 比了
 for (const r of table) console.log(`| ${r.attacker} | ${r.skill} | ${r.target} | ${r.hits} | ${r.stateChanged}${r.stateDiff.length ? `（${r.stateDiff.join('、')}）` : ''} | ${r.compared} | ${r.exact} | ${r.same} | ${r.near} | ${r.off} | ${r.capDiff} | ${r.finalRatio == null ? '—' : r.finalRatio.toFixed(2)} | ${r.verdict}${r.explain ? (r.explain.remove ? `：去掉「${r.explain.remove.join('」和「')}」后和记录相差 1.5% 以内` : '：去掉一两条也凑不出记录的数') : ''} |`);
 if (result.notes.length) console.log('\n注：' + result.notes.join('；'));
 if (result.unsupported.length) console.log('引擎还没实现的原生函数：' + result.unsupported.join('、'));
-if (flag('hits')) for (const r of table) { console.log(`\n${r.key}`); for (const x of r.g.hits) console.log(`  第 ${x.h.frame} 帧${x.h.critical ? ' 暴击' : ''}：记录 核心值 ${x.h.core} 最终 ${x.h.damage}` + (x.f ? `；引擎 核心值 ${x.e.coreDamage} 最终 ${x.f.damage}（${(x.finalRatio * 100).toFixed(1)}%${x.behind ? '，按背后命中' : ''}${x.casting ? '，按目标正在出招' : ''}${showRaw ? ' raw ' + JSON.stringify(x.h.raw) + (x.fFront ? ' 正面' + (x.fFront / x.h.damage * 100).toFixed(0) + '% 背后' + (x.fBack / x.h.damage * 100).toFixed(0) + '%' : '') : ''}${x.capped ? '，到上限' : ''}）` : x.diff ? `；状态对不上：${x.diff.join('；')}` : '')); }
+if (flag('hits')) for (const r of table) { console.log(`\n${r.key}`); for (const x of r.g.hits) console.log(`  第 ${x.h.frame} 帧${x.h.critical ? ' 暴击' : ''}：记录 核心值 ${x.h.core} 最终 ${x.h.damage}` + (x.f ? `；引擎 核心值 ${x.e.coreDamage} 最终 ${x.f.damage}（${(x.finalRatio * 100).toFixed(1)}%${x.behind ? '，按背后命中' : ''}${x.casting ? '，按目标正在出招' : ''}${x.h.guarded ? '，被格挡' : ''}${x.h.inBreak ? '，目标 Break 中' : ''}${x.h.clipped ? '，记录到上限' : ''}${showRaw ? ' raw ' + JSON.stringify(x.h.raw) + (x.fFront ? ' 正面' + (x.fFront / x.h.damage * 100).toFixed(0) + '% 背后' + (x.fBack / x.h.damage * 100).toFixed(0) + '%' : '') : ''}${x.capped ? '，到上限' : ''}）` : x.diff ? `；状态对不上：${x.diff.join('；')}` : '')); }
 if (detail) {
   const r = table.find(r => r.key.includes(detail) && r.g.hits.some(x => x.f)) || table.find(r => r.key.includes(detail));
   const x = r?.g.hits.find(x => x.f) || r?.g.hits.find(x => x.e);

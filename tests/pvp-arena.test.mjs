@@ -83,3 +83,15 @@ test('对阵表：我方取自一场记录、对手取自对手列表，双方�
   assert.ok(r.perHit[0] > 1000 && r.perHitCritical[0] >= r.perHit[0] && r.cap >= r.perHitCritical[1] && r.hitsPerCast.median >= 1);
   assert.equal(out.unsupported.length, 0);
 });
+
+test('自动格挡：琉特格挡时减 50%，被格挡的一下不高于没格挡的一半；记录里的格挡、暴击标记读自 flag 列', () => {
+  const g = arena.guardOf(index('敌琉特'));
+  assert.equal(g.can, true); assert.equal(g.ratio, 0.5); assert.ok(g.chance > 0.2 && g.chance < 0.6);
+  assert.equal(arena.guardOf(index('我朱迪卡萨梅克')).can, false);
+  const h = match.hits.find(x => x.frame === 72 && x.attacker === 1);
+  const a = arena.strike(index('我朱迪卡萨梅克'), index('敌琉特'), { skillId: h.skillId, level: h.skillLv, core: h.core })[0];
+  const b = arena.strike(index('我朱迪卡萨梅克'), index('敌琉特'), { skillId: h.skillId, level: h.skillLv, core: h.core, guarded: true })[0];
+  assert.equal(b.guarded, true); assert.ok(b.damage <= a.damage / 2 && b.damage > 0);
+  assert.deepEqual([h.critical, h.guarded, h.saveLife, h.killerFlag], [false, false, true, true]);
+  assert.equal(match.hits.find(x => x.frame === 72 && x.attacker === 1 && x.damage === 271970).critical, true);
+});

@@ -3,7 +3,7 @@
 // *Mst tables; scripts drive every passive/buff decision; this file only reproduces the native
 // pieces the scripts call into (ProcControl2, UnitGetValue, BuffControl, ...) and the fixed
 // damage pipeline order established from GameAssembly (ProcessWork.ProcControlDamage/CalcDamage).
-import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20261005-2047';
+import { LuaHost, multi, LuaTable } from './lua-host.mjs?v=20261005-2057';
 
 const f32 = Math.fround;
 const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
@@ -583,7 +583,7 @@ export class Battle {
     const segments = lvRow ? this.master.processSegments(lvRow.PROCESS_INFO) : [];
     const weaponElem = owner.equips.find(e => e.pos === 1)?.elem ?? 0;
     const element = spec.elementOverride ?? (skill.weaponElem && skill.elem === 0 ? weaponElem : skill.elem);
-    const b = { uid: this.nextUid++, owner: owner.id, target: target.id, skillId: spec.skillId, skill, bulletId: spec.bulletId, level: spec.level ?? 1, lvRow, segments, dmgRatio: spec.dmgRatio ?? 10000, hitIndex: spec.hitIndex ?? 0, element, work: [], values: {}, edits: [], damage: 0, orgDamage: 0, lastDamage: 0, critical: !!spec.critical, random: spec.random ?? 1, coreOverride: spec.coreOverride ?? null, killer: false, puid: this.timeline && this.timeline.skillId === spec.skillId && this.timeline.owner === owner.id ? this.timeline.puid : this.nextUid++, instances: [], results: [] };
+    const b = { uid: this.nextUid++, owner: owner.id, target: target.id, skillId: spec.skillId, skill, bulletId: spec.bulletId, level: spec.level ?? 1, lvRow, segments, dmgRatio: spec.dmgRatio ?? 10000, hitIndex: spec.hitIndex ?? 0, element, work: [], values: {}, edits: [], damage: 0, orgDamage: 0, lastDamage: 0, critical: !!spec.critical, random: spec.random ?? 1, coreOverride: spec.coreOverride ?? null, guarded: !!spec.guarded, killer: false, puid: this.timeline && this.timeline.skillId === spec.skillId && this.timeline.owner === owner.id ? this.timeline.puid : this.nextUid++, instances: [], results: [] };
     b.instances = segments.map((seg, i) => this.makeInstance({ owner: owner.id, affiliation: K.AFF.NONE, localId: spec.bulletId, localIndex: i, processId: seg.processId, prob: seg.prob, params: seg.params })).filter(Boolean);
     this.dispatch(K.TRIG.BEFORE_CREATE_BULLET, owner, target, b);
     return b;
@@ -698,13 +698,30 @@ export class Battle {
     const uncapped = Math.max(damage, 1);
     let finalDamage = damage <= 0 ? 0 : clamp(uncapped, 1, cap);
     if (hitScale?.stage === 'afterCap' && hitScale.ratio !== 1 && finalDamage > 0) finalDamage = Math.max(1, Math.trunc(finalDamage * hitScale.ratio));
+    // 自動ガード (2026-10-05, ProcessWork.CalcDamage after the passives and the limit): a guarded hit deals floor((1 − guard ratio) × damage).
+    // Whether a hit is guarded is a roll in the game (CheckAutoGuard); here the caller says so (spec.guarded) and the ratio comes from guardInfo().
+    let guard = null;
+    if (bullet.guarded && finalDamage > 0) { guard = this.guardInfo(target, magical); if (guard.ratio > 0) finalDamage = Math.max(0, Math.floor((1 - guard.ratio) * finalDamage)); }
     bullet.lastDamage = finalDamage;
     target.hp = Math.max(0, target.hp - finalDamage);
-    const result = { ...core, hitIndex: bullet.hitIndex, afterPassives: damage, cap, capComputed, capVal, capPer, capAdd, uncapped, damage: finalDamage, edits: bullet.edits.slice(), crt, breakdown };
+    const result = { ...core, guarded: !!guard, guardRatio: guard ? guard.ratio : 0, hitIndex: bullet.hitIndex, afterPassives: damage, cap, capComputed, capVal, capPer, capAdd, uncapped, damage: finalDamage, edits: bullet.edits.slice(), crt, breakdown };
     bullet.edits = [];
     bullet.results.push(result);
     this.log('damage', result);
     return true;
+  }
+  // The unit's auto guard: AutoGuard (600) {ratio per 10000} gives the base performance and, on its instance, the base chance;
+  // GuardRate (601) {val, per, add} edits the chance, GuardValue (602) the performance (鐵壁格擋 +2500 → 25% + 25% = 50%).
+  // Magic is guarded only with MagicGuardable (603). Returns { can, chance (0–1), ratio (0–1) }.
+  guardInfo(u, magical = false) {
+    const entries = [...u.status, ...u.real], of = op => entries.filter(e => e.op === op);
+    const auto = of(600); if (!auto.length || (magical && !of(603).length)) return { can: false, chance: 0, ratio: 0 };
+    const sum = list => { let val = 0, per = 0, add = 0; for (const e of list) { val += e.params[0] || 0; per += e.params[1] || 0; add += e.params[2] || 0; } return { val, per, add }; };
+    const base = Math.max(...auto.map(e => e.params[0] || 0)), v = sum(of(602)), r = sum(of(601));
+    const baseChance = Math.max(0, ...u.instances.filter(i => i.enabled && i.mst.OPE_INFO === 600).map(i => i.params[0] || 0));
+    const ratio = clamp(((base + v.val) * (1 + v.per * 0.0001) + v.add) / 10000, 0, 1);
+    const chance = clamp(((baseChance + r.val) * (1 + r.per * 0.0001) + r.add) / 10000, 0, 1);
+    return { can: true, chance, ratio };
   }
   // options.skillElementOff: the user unticked it in 触发效果 (2026-10-01: “这个应该是可以取消的”)
   skillElementOverride(owner, skillId, skillType) { return this.options.skillElementOff ? null : this.skillElementEntry(owner, skillId, skillType)?.params[3] ?? null; }
@@ -1031,7 +1048,7 @@ export class Battle {
       GetBulletWork(index, ever) { const c = cur(); if (!c?.inst) return null; const store = ever ? (c.inst.keptEver || {}) : (c.inst.kept || {}); return store[index] ?? null; },
       SetBulletWork(index, val, ever, calc) { const c = cur(); if (!c?.inst) return null; const key = ever ? 'keptEver' : 'kept'; c.inst[key] = c.inst[key] || {}; c.inst[key][index] = csCalc(calc || 0, c.inst[key][index], val); return c.inst[key][index]; },
       BulletWasCritical() { return !!curBullet()?.critical; },
-      BulletWasGuarded() { return false; }, BulletTargetUseCounter() { return false; }, BulletWasLastAttack() { return false; },
+      BulletWasGuarded() { return !!curBullet()?.guarded; }, BulletTargetUseCounter() { return false; }, BulletWasLastAttack() { return false; },
       BulletGetKiller() { const b = curBullet(); if (!b) return [0]; return B.killerTypes(b); },
       BulletGetSkillTotalDamage() { const b = curBullet(); return b ? b.results.reduce((s, r) => s + r.damage, 0) : 0; },
       BulletGetDeleteOnHit() { return true; },
